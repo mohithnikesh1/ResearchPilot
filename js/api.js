@@ -1,6 +1,6 @@
 // api.js - fetch wrapper for Research Navigator backend
 // Set HF_BASE to your HuggingFace Space URL before deploying
-const HF_BASE = "https://nikeshn-researchbee.hf.space";
+const HF_BASE = "https://mohithnikesh-researchpilot.hf.space";
 
 export async function callAPI(endpoint, payload) {
   const res = await fetch(`${HF_BASE}${endpoint}`, {
