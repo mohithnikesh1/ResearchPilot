@@ -2,8 +2,8 @@
 import { callAPI, getModel, getLanguage } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
-  esc, renderRepoCard, renderKhaznaCard,
-  renderHelpCard, renderNextActions, renderMascotRow
+  esc, renderRepoCard,
+  renderNextActions, renderMascotRow
 } from "./render.js";
 
 export function repositoryTab() {
@@ -107,10 +107,6 @@ function renderDepositStrategy(s) {
           <div class="rec-item"><dt>Secondary choice</dt><dd>${esc(s.secondary_choice)}</dd></div>
           <div class="rec-item" style="grid-column:1/-1"><dt>Metadata standard</dt><dd>${esc(s.metadata_standard)}</dd></div>
         </dl>
-        ${s.khazna_metadata_note ? `
-          <div class="khazna-tip" style="background:var(--primary-xlight);border-color:var(--primary-light)">
-            <span>️</span><span style="color:var(--primary)">${esc(s.khazna_metadata_note)}</span>
-          </div>` : ""}
         ${s.deposit_workflow?.length ? `
           <div>
             <h5 style="font-size:13px;font-weight:600;margin-bottom:6px">🔄 Deposit workflow</h5>
@@ -146,7 +142,6 @@ function renderRepoResults(result, container) {
 
     ${renderDepositStrategy(result.deposit_strategy)}
     ${renderNextActions(result.next_actions, result.global_notes)}
-    ${renderHelpCard()}
   `;
 
   document.getElementById("repo-reset")?.addEventListener("click", () => {
