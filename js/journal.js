@@ -4,7 +4,7 @@ import { showProgress, setStep, doneProgress } from "./app.js";
 import {
   esc, quartileBadge, confidenceBadge, oaStatusBadge,
   renderVersionBlock, renderVerifyLinks, renderOpenAlexMetrics,
-  renderRankingBlock, renderKhaznaCard, renderHelpCard,
+  renderRankingBlock,
   renderNextActions, renderManuscriptUnderstanding, renderMascotRow,
   renderSubmissionChecklist, renderCoverLetterBtn
 } from "./render.js";
@@ -187,7 +187,6 @@ function renderRepoRecommendation(r) {
           <div class="rec-item"><dt>Embargoed deposit needed</dt><dd>${esc(r.embargoed_deposit_needed)}</dd></div>
           <div class="rec-item"><dt>Metadata-only first</dt><dd>${esc(r.metadata_only_first)}</dd></div>
         </dl>
-        ${r.khazna_note ? `<div class="policy-notes"><p><strong>Khazna note:</strong> ${esc(r.khazna_note)}</p></div>` : ""}
         ${r.manual_checks_required?.length ? `
           <div>
             <h5 style="font-size:13px;font-weight:600;margin-bottom:6px">[!] Manual checks required</h5>
@@ -219,9 +218,7 @@ function renderJournalResults(result, container) {
     ${renderExtendedList(extended)}
 
     ${renderRepoRecommendation(result.repository_recommendation)}
-    ${result.khazna ? renderKhaznaCard(result.khazna, "article") : ""}
     ${renderNextActions(result.next_actions, result.global_notes)}
-    ${renderHelpCard()}
   `;
 
   // Export buttons
@@ -379,7 +376,7 @@ function renderSubjectResults(result, container) {
               </div>
               <div class="form-group">
                 <label style="font-size:12px">Your name (optional)</label>
-                <input id="cl-author-${uid}" type="text" placeholder="e.g. Dr. Nikesh">
+                <input id="cl-author-${uid}" type="text" placeholder="e.g. Dr. Smith">
               </div>
               <div class="form-group form-full">
                 <label style="font-size:12px">Abstract <span class="req">*</span></label>
