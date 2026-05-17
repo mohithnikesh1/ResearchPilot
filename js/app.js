@@ -3,7 +3,7 @@ import { journalTab, subjectTab } from "./journal.js";
 import { licenseTab }    from "./license.js";
 import { repositoryTab } from "./repository.js";
 
-const API_BASE = "https://nikeshn-researchbee.hf.space";
+const API_BASE = "https://mohithnikesh-researchpilot.hf.space";
 
 // ── Mode switcher ──────────────────────────────────────────────────────────
 function switchMode(mode) {
@@ -97,7 +97,7 @@ const PLACEHOLDERS = {
   "j-methods":     { en: "e.g. survey, experiment, case study",            ar: "مثال: مسح، تجربة، دراسة حالة" },
   "j-apc":         { en: "e.g. up to USD 2000, or no APC",                ar: "مثال: حتى 2000 دولار، أو بدون رسوم" },
   "j-funder":      { en: "e.g. ERC, NIH, Wellcome",                       ar: "مثال: المجلس الأوروبي للبحوث، NIH" },
-  "j-institution": { en: "e.g. Khalifa University",                        ar: "مثال: جامعة خليفة" },
+  "j-institution": { en: "e.g. your university",                        ar: "مثال: جامعتك" },
   "j-country":     { en: "e.g. UAE",                                       ar: "مثال: الإمارات العربية المتحدة" },
   "j-audience":    { en: "e.g. library practitioners, AI researchers",     ar: "مثال: أمناء المكتبات، باحثو الذكاء الاصطناعي" },
   "j-preferred":   { en: "e.g. Nature Communications, PLOS ONE",           ar: "مثال: Nature Communications، PLOS ONE" },
@@ -115,7 +115,7 @@ const PLACEHOLDERS = {
   "r-formats":     { en: "e.g. CSV, FASTQ, NetCDF, TIFF",                  ar: "مثال: CSV، FASTQ، NetCDF" },
   "r-size":        { en: "e.g. 250 MB / 5 GB / 2 TB",                      ar: "مثال: 250 ميغابايت / 5 جيجابايت" },
   "r-funder":      { en: "e.g. Horizon Europe, NIH, ADEK",                 ar: "مثال: أفق أوروبا، NIH، أديك" },
-  "r-institution": { en: "e.g. Khalifa University",                        ar: "مثال: جامعة خليفة" },
+  "r-institution": { en: "e.g. your university",                        ar: "مثال: جامعتك" },
   "r-country":     { en: "e.g. UAE",                                       ar: "مثال: الإمارات العربية المتحدة" },
   "r-preferred":   { en: "e.g. Zenodo, GenBank",                           ar: "مثال: Zenodo، GenBank" },
   "r-publication": { en: "Related article DOI or title",                   ar: "DOI أو عنوان المقالة المرتبطة" },
@@ -218,7 +218,7 @@ window.copyToClipboard = function(text, el) {
 (function initChat() {
   const MAX_HIST = 20;
 
-  const WELCOME = "Hi! I'm ResearchBee 🐝 — KU Library's publishing assistant.\n\nChoose an option below, or type any question about publishing, Open Access, or research data.";
+  const WELCOME = "Hi! I'm ResearchPilot 🧭 — your AI publishing assistant.\n\nChoose an option below, or type any question about publishing, Open Access, or research data.";
 
   const MENU_CARDS = [
     {
@@ -228,7 +228,7 @@ window.copyToClipboard = function(text, el) {
     },
     {
       emoji: "🛡️", color: "#059669", route: "license", prefill: {},
-      title: "Deposit my article to Khazna or other repositories",
+      title: "Deposit my article to an institutional or subject repository",
       desc:  "Check self-archiving rights, embargo & allowed versions",
     },
     {
@@ -534,7 +534,7 @@ window.copyToClipboard = function(text, el) {
 
     } catch (err) {
       bubble.innerHTML = "⚠️ Something went wrong. Please try again in a moment.";
-      console.error("[ResearchBee chat]", err);
+      console.error("[ResearchPilot chat]", err);
     }
 
     isTyping = false;
