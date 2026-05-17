@@ -249,7 +249,7 @@ window.copyToClipboard = function(text, el) {
     data:     { emoji: "🗄️", label: "Open Data Repository tool",    color: "#d97706" },
   };
 
-  let isOpen = false, isTyping = false, history = [];
+  let isOpen = false, isTyping = false, history = [], welcomeShown = false;
 
   const panel    = document.getElementById("rb-chat-panel");
   const launcher = document.getElementById("rb-chat-launcher");
@@ -391,9 +391,9 @@ window.copyToClipboard = function(text, el) {
     clearBtn.className = "rb-clear-btn";
     clearBtn.textContent = "Clear";
     clearBtn.addEventListener("click", () => {
-      // Clear messages and history, show fresh menu
       msgs.innerHTML = "";
       history = [];
+      welcomeShown = true; // already showing it below, don't double-fire
       addMessage("assistant", WELCOME);
       showMenuCards();
     });
@@ -409,7 +409,8 @@ window.copyToClipboard = function(text, el) {
     badge.classList.remove("visible");
     tooltip.classList.remove("show");
     input.focus();
-    if (history.length === 0) {
+    if (!welcomeShown) {
+      welcomeShown = true;
       addMessage("assistant", WELCOME);
       showMenuCards();
     }
