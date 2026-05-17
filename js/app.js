@@ -384,7 +384,7 @@ window.copyToClipboard = function(text, el) {
           setTimeout(() => {
             closePanel();
             activateTabAndPrefill(card.route, card.prefill);
-          }, 1800);
+          }, 800);
         } else {
           // Free chat — remove menu, focus input
           wrap.remove();
@@ -534,13 +534,24 @@ window.copyToClipboard = function(text, el) {
 
       // Store clean reply in history
       const cleanReply = fullText.trim();
-      history.push({ role: "assistant", content: cleanReply });
+
+      // If reply is empty (LLM only returned routing JSON with no text), show fallback
+      if (!cleanReply) {
+        bubble.innerHTML = "I'm here to help! Feel free to ask me anything about publishing, open access, journal policies, or research data repositories.";
+        history.push({ role: "assistant", content: "I'm here to help! Feel free to ask me anything about publishing, open access, journal policies, or research data repositories." });
+      } else {
+        history.push({ role: "assistant", content: cleanReply });
+      }
+
       if (history.length > MAX_HIST) history = history.slice(-MAX_HIST);
 
       // Show routing CTA
       if (route && TAB_META[route]) {
         addRouteCTA(route, prefill);
       }
+
+      // Always restore menu after response so user can keep navigating
+      showMenuCards();
 
     } catch (err) {
       bubble.innerHTML = "⚠️ Something went wrong. Please try again in a moment.";
