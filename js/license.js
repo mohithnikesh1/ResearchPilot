@@ -3,10 +3,10 @@ import { callAPI, getModel, getLanguage } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
   esc, oaStatusBadge, renderVersionBlock, renderVerifyLinks,
-  renderKhaznaCard, renderHelpCard, renderNextActions, renderMascotRow
+  renderNextActions, renderMascotRow
 } from "./render.js";
 
-const HF_BASE = "https://nikeshn-researchbee.hf.space";
+const HF_BASE = "https://mohithnikesh-researchpilot.hf.space";
 
 // ── Journal name auto-lookup — multi-suggestion ──────────────────────────
 let _lookupTimer = null;
@@ -295,7 +295,6 @@ function renderDepositRecommendation(r) {
           <div class="rec-item"><dt>Embargoed deposit needed</dt><dd>${esc(r.embargoed_deposit_needed)}</dd></div>
           <div class="rec-item"><dt>Metadata-only first</dt><dd>${esc(r.metadata_only_first)}</dd></div>
         </dl>
-        ${r.khazna_note ? `<div class="policy-notes"><p><strong>Khazna note:</strong> ${esc(r.khazna_note)}</p></div>` : ""}
         ${r.manual_checks_required?.length ? `
           <div>
             <h5 style="font-size:13px;font-weight:600;margin-bottom:6px">[!] Manual checks required</h5>
@@ -318,9 +317,7 @@ function renderLicenseResults(result, container) {
     <h3 style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:14px">🟢 Green OA / self-archiving by version</h3>
     ${journals.map(j => renderPolicyCard(j)).join("")}
     ${renderDepositRecommendation(result.repository_recommendation)}
-    ${result.khazna ? renderKhaznaCard(result.khazna, "article") : ""}
     ${renderNextActions(result.next_actions, result.global_notes)}
-    ${renderHelpCard()}
   `;
 
   document.getElementById("license-reset")?.addEventListener("click", () => {
