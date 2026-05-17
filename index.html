@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResearchBee — Khalifa University Library</title>
-  <meta name="description" content="Find the right journal. Check your rights. Deposit to the right repository. AI-powered publishing and repository assistant for KU researchers.">
+  <title>ResearchPilot — AI Publishing Assistant</title>
+  <meta name="description" content="Find the right journal. Check your rights. Deposit to the right repository. AI-powered publishing and repository assistant for researchers.">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/researchbeemascot.png">
   <style>
@@ -374,16 +374,12 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="brand">
-      <img src="assets/researchbeemascot.png" class="brand-mascot" alt="ResearchBee mascot">
+      <img src="assets/researchbeemascot.png" class="brand-mascot" alt="ResearchPilot mascot">
       <div>
-        <span class="brand-name">Research Navigator</span>
-        <span class="brand-sub">Khalifa University Library</span>
+        <span class="brand-name">ResearchPilot</span>
+        <span class="brand-sub">AI Publishing Assistant</span>
       </div>
     </a>
-    <nav class="header-links">
-      <a href="https://library.ku.ac.ae/lib" target="_blank" class="header-link">📚 KU Library</a>
-      <a href="https://khazna.ku.ac.ae"      target="_blank" class="header-link">🏛️ Khazna</a>
-    </nav>
   </div>
   <!-- Language bar only — model selector removed -->
   <div class="model-bar">
@@ -399,9 +395,9 @@
 
 <div class="lb-welcome">
   <div class="lb-mascot">
-    <img src="assets/researchbeemascot.png" class="lb-mascot-img" alt="ResearchBee">
-    <h1 class="lb-title">ResearchBee</h1>
-    <p class="lb-sub">Khalifa University Library's AI publishing assistant — find the right journal, check self-archiving rights, and deposit to the right repository.</p>
+    <img src="assets/researchbeemascot.png" class="lb-mascot-img" alt="ResearchPilot">
+    <h1 class="lb-title">ResearchPilot</h1>
+    <p class="lb-sub">Your AI publishing assistant — find the right journal, check self-archiving rights, and deposit to the right repository.</p>
   </div>
 </div>
 
@@ -500,7 +496,7 @@
                 <div class="form-group"><label for="j-speed" id="lbl-speed">Publication speed</label><select id="j-speed"><option>Standard</option><option>Fast turnaround preferred</option><option>No preference</option></select></div>
                 <div class="form-group"><label for="j-repo-target" id="lbl-repo-target">Repository target</label><select id="j-repo-target"><option>Institutional repository</option><option>Subject repository</option><option>Both</option><option>Not sure</option></select></div>
                 <div class="form-group"><label for="j-funder" id="lbl-funder">Funder</label><input id="j-funder" type="text" placeholder="e.g. ERC, NIH, Wellcome, cOAlition S"></div>
-                <div class="form-group"><label for="j-institution" id="lbl-institution">Institution</label><input id="j-institution" type="text" placeholder="e.g. Khalifa University"></div>
+                <div class="form-group"><label for="j-institution" id="lbl-institution">Institution</label><input id="j-institution" type="text" placeholder="e.g. your university"></div>
                 <div class="form-group"><label for="j-country" id="lbl-country">Country / region</label><input id="j-country" type="text" placeholder="e.g. UAE"></div>
                 <div class="form-group"><label for="j-audience" id="lbl-audience">Target audience</label><input id="j-audience" type="text" placeholder="e.g. library practitioners, AI researchers"></div>
                 <div class="form-group form-full"><label for="j-preferred" id="lbl-preferred">Preferred journals (optional)</label><input id="j-preferred" type="text" placeholder="e.g. Nature Communications, PLOS ONE"></div>
@@ -551,7 +547,7 @@
       <div class="card">
         <div class="card-header">
           <h2>🗄 Find a research data repository</h2>
-          <p>Describe your dataset. We'll match it to domain-specific and generalist repositories and Khazna — the KU institutional repository.</p>
+          <p>Describe your dataset. We'll match it to domain-specific and generalist repositories (re3data, FAIRsharing, OpenAIRE, Zenodo, and more).</p>
         </div>
         <div class="card-body">
           <div class="form-grid form-2col">
@@ -577,7 +573,7 @@
             <div class="section-label">Context</div>
             <div class="form-grid form-2col">
               <div class="form-group"><label for="r-funder" id="lbl-r-funder">Funder</label><input id="r-funder" type="text" placeholder="e.g. Horizon Europe, NIH, ERC, ADEK"></div>
-              <div class="form-group"><label for="r-institution" id="lbl-r-institution">Institution</label><input id="r-institution" type="text" placeholder="e.g. Khalifa University"></div>
+              <div class="form-group"><label for="r-institution" id="lbl-r-institution">Institution</label><input id="r-institution" type="text" placeholder="e.g. your university"></div>
               <div class="form-group"><label for="r-country" id="lbl-r-country">Country / region</label><input id="r-country" type="text" placeholder="e.g. UAE"></div>
               <div class="form-group"><label for="r-preferred" id="lbl-r-preferred">Preferred / required repository (optional)</label><input id="r-preferred" type="text" placeholder="e.g. Zenodo, GenBank"></div>
               <div class="form-group form-full"><label for="r-publication" id="lbl-r-publication">Linked publication / DOI (optional)</label><input id="r-publication" type="text" placeholder="Related article DOI or title"></div>
@@ -596,36 +592,36 @@
 <footer class="site-footer">
   <div class="footer-inner">
     <p>Ranking metrics sourced from journal data (2025). Always verify policies on <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank">Open Policy Finder</a> and repositories on <a href="https://www.re3data.org" target="_blank">re3data</a> before deposit.</p>
-    <p><a href="https://library.ku.ac.ae/lib" target="_blank">KU Library</a> · <a href="https://khazna.ku.ac.ae" target="_blank">Khazna Repository</a> · <a href="https://github.com/ku-library/researchbee" target="_blank">GitHub</a></p>
+    <p><a href="https://github.com/mohithnikesh1/ResearchPilot" target="_blank">GitHub</a></p>
   </div>
 </footer>
 
 <!-- Mobile slim chat bar — sticky above tabs, mobile only -->
-<button id="rb-mobile-chat-bar" aria-label="Need help? Chat with ResearchBee">
+<button id="rb-mobile-chat-bar" aria-label="Need help? Chat with ResearchPilot">
   <span class="rb-mobile-bar-icon">?</span>
   <span class="rb-mobile-bar-text">
     <span class="rb-mobile-bar-top">Need help?</span>
-    <span class="rb-mobile-bar-main">Chat with ResearchBee</span>
+    <span class="rb-mobile-bar-main">Chat with ResearchPilot</span>
   </span>
   <span class="rb-mobile-bar-arrow">›</span>
 </button>
 
 <!-- Chat Widget HTML -->
-<div id="rb-chat-tooltip">💬 Ask ResearchBee anything</div>
-<button id="rb-chat-launcher" aria-label="Open ResearchBee chat — Need help? Chat with ResearchBee">
+<div id="rb-chat-tooltip">💬 Ask ResearchPilot anything</div>
+<button id="rb-chat-launcher" aria-label="Open ResearchPilot chat — Need help? Chat with ResearchPilot">
   <span class="rb-launcher-icon">?</span>
   <span class="rb-launcher-label">
     <span class="rb-launcher-label-top">Need help?</span>
-    <span class="rb-launcher-label-main">Chat with ResearchBee</span>
+    <span class="rb-launcher-label-main">Chat with ResearchPilot</span>
   </span>
   <span id="rb-chat-badge"></span>
 </button>
-<div id="rb-chat-panel" role="dialog" aria-label="ResearchBee chat assistant">
+<div id="rb-chat-panel" role="dialog" aria-label="ResearchPilot chat assistant">
   <div class="rb-chat-header">
-    <img src="assets/researchbeemascot.png" alt="ResearchBee">
+    <img src="assets/researchbeemascot.png" alt="ResearchPilot">
     <div class="rb-chat-header-text">
-      <span class="rb-chat-header-name">ResearchBee</span>
-      <span class="rb-chat-header-sub">KU Library Publishing Assistant</span>
+      <span class="rb-chat-header-name">ResearchPilot</span>
+      <span class="rb-chat-header-sub">AI Publishing Assistant</span>
     </div>
     <div class="rb-chat-status" title="Online"></div>
     <button class="rb-chat-close" id="rb-chat-close" aria-label="Close chat">×</button>
@@ -636,12 +632,12 @@
   </div>
   <div id="rb-chat-messages" aria-live="polite"></div>
   <div class="rb-chat-input-wrap">
-    <textarea id="rb-chat-input" rows="1" placeholder="Ask about KU OA policy, publishing rights, or Khazna…" aria-label="Chat message" maxlength="2000"></textarea>
+    <textarea id="rb-chat-input" rows="1" placeholder="Ask about publishing rights, open access, or data repositories…" aria-label="Chat message" maxlength="2000"></textarea>
     <button id="rb-chat-send" aria-label="Send message" disabled>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14.5 8L2 2l2.5 6L2 14l12.5-6z" fill="white"/></svg>
     </button>
   </div>
-  <div class="rb-chat-footer">ResearchBee · <a href="https://library.ku.ac.ae/lib" target="_blank">KU Library</a></div>
+  <div class="rb-chat-footer">ResearchPilot</div>
 </div>
 
 <script type="module" src="js/app.js"></script>
