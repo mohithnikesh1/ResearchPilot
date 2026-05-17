@@ -500,9 +500,9 @@ window.copyToClipboard = function(text, el) {
 
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (value) buffer += decoder.decode(value, { stream: true });
 
-        buffer += decoder.decode(value, { stream: true });
+        // Process all complete SSE lines in buffer
         const lines = buffer.split("\n\n");
         buffer = lines.pop(); // keep incomplete chunk
 
@@ -512,17 +512,17 @@ window.copyToClipboard = function(text, el) {
             const evt = JSON.parse(line.slice(6));
 
             if (evt.done) {
-              // Final event — use clean reply from server
               route   = evt.route   || null;
               prefill = evt.prefill || {};
-              if (evt.reply) {
+              // Use clean server reply if available, otherwise keep streamed text
+              if (evt.reply !== undefined && evt.reply !== null) {
                 fullText = evt.reply;
               }
             } else if (evt.token) {
               fullText += evt.token;
             }
 
-            // Update bubble with current text
+            // Update bubble
             bubble.innerHTML = esc(fullText).replace(/\n/g, "<br>")
               .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
               + (evt.done ? "" : '<span class="rb-cursor">▌</span>');
@@ -530,27 +530,43 @@ window.copyToClipboard = function(text, el) {
 
           } catch (_) { /* malformed SSE chunk — skip */ }
         }
+
+        if (done) break;
       }
 
-      // Store clean reply in history
-      const cleanReply = fullText.trim();
+      // Flush any remaining buffer content after stream ends
+      if (buffer.trim()) {
+        const remaining = buffer.trim();
+        if (remaining.startsWith("data: ")) {
+          try {
+            const evt = JSON.parse(remaining.slice(6));
+            if (evt.done) {
+              route   = evt.route   || null;
+              prefill = evt.prefill || {};
+              if (evt.reply !== undefined && evt.reply !== null) {
+                fullText = evt.reply;
+              }
+              bubble.innerHTML = esc(fullText).replace(/\n/g, "<br>")
+                .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+              scrollBottom();
+            }
+          } catch (_) { /* ignore malformed */ }
+        }
+      }
 
-      // If reply is empty (LLM only returned routing JSON with no text), show fallback
-      if (!cleanReply) {
-        bubble.innerHTML = "I'm here to help! Feel free to ask me anything about publishing, open access, journal policies, or research data repositories.";
-        history.push({ role: "assistant", content: "I'm here to help! Feel free to ask me anything about publishing, open access, journal policies, or research data repositories." });
-      } else {
+      // Store reply in history
+      const cleanReply = fullText.trim();
+      if (cleanReply) {
         history.push({ role: "assistant", content: cleanReply });
       }
-
       if (history.length > MAX_HIST) history = history.slice(-MAX_HIST);
 
-      // Show routing CTA
+      // Show routing CTA if bot suggested a tab
       if (route && TAB_META[route]) {
         addRouteCTA(route, prefill);
       }
 
-      // Always restore menu after response so user can keep navigating
+      // Restore menu so user can keep navigating
       showMenuCards();
 
     } catch (err) {
