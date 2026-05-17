@@ -514,8 +514,8 @@ window.copyToClipboard = function(text, el) {
             if (evt.done) {
               route   = evt.route   || null;
               prefill = evt.prefill || {};
-              // Use clean server reply if available, otherwise keep streamed text
-              if (evt.reply !== undefined && evt.reply !== null) {
+              // Only replace streamed text if server reply is non-empty
+              if (evt.reply && evt.reply.trim()) {
                 fullText = evt.reply;
               }
             } else if (evt.token) {
@@ -543,7 +543,7 @@ window.copyToClipboard = function(text, el) {
             if (evt.done) {
               route   = evt.route   || null;
               prefill = evt.prefill || {};
-              if (evt.reply !== undefined && evt.reply !== null) {
+              if (evt.reply && evt.reply.trim()) {
                 fullText = evt.reply;
               }
               bubble.innerHTML = esc(fullText).replace(/\n/g, "<br>")
