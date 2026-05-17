@@ -225,21 +225,25 @@ window.copyToClipboard = function(text, el) {
       emoji: "🏆", color: "#1a2744", route: "journals", prefill: {},
       title: "Find the best journal for my paper",
       desc:  "AI-matched journals with rankings, OA policy & cover letter",
+      explanation: "Great choice! The Journal Submission tab lets you either browse by subject for an instant ranked list, or paste your abstract for a personalised AI analysis — including Green OA policy, submission strategy, and a cover letter generator. Fill in as much detail as you can for the best results.",
     },
     {
       emoji: "🛡️", color: "#059669", route: "license", prefill: {},
-      title: "Deposit my article to an institutional or subject repository",
+      title: "Check self-archiving rights for a journal",
       desc:  "Check self-archiving rights, embargo & allowed versions",
+      explanation: "The License Checking tab looks up the self-archiving policy for any specific journal — telling you exactly which version (preprint, accepted manuscript, or published) you can deposit, where, and under what embargo. Just enter the journal name or ISSN.",
     },
     {
       emoji: "🗄️", color: "#d97706", route: "data", prefill: {},
       title: "Find the right repository for my dataset",
       desc:  "Match your data to domain-specific & institutional repos",
+      explanation: "The Data Repository tab matches your dataset to the best repositories — domain-specific ones like GenBank or PANGAEA, or generalist options like Zenodo and Figshare. Describe your data and it will show FAIR alignment, embargo support, cost, and verification links.",
     },
     {
       emoji: "💬", color: "#4338CA", route: null, prefill: {},
-      title: "Other publishing questions",
-      desc:  "KU OA policy, APC funding, publisher agreements & more",
+      title: "Ask a publishing question",
+      desc:  "Open access, APC funding, publisher agreements & more",
+      explanation: null,
     },
   ];
 
@@ -374,9 +378,13 @@ window.copyToClipboard = function(text, el) {
 
       item.addEventListener("click", () => {
         if (card.route) {
-          // Direct tool routes — close panel and go to tab
-          closePanel();
-          activateTabAndPrefill(card.route, card.prefill);
+          // Show explanation as bot message, then redirect after short delay
+          wrap.remove();
+          if (card.explanation) addMessage("assistant", card.explanation);
+          setTimeout(() => {
+            closePanel();
+            activateTabAndPrefill(card.route, card.prefill);
+          }, 1800);
         } else {
           // Free chat — remove menu, focus input
           wrap.remove();
@@ -412,8 +420,9 @@ window.copyToClipboard = function(text, el) {
     if (!welcomeShown) {
       welcomeShown = true;
       addMessage("assistant", WELCOME);
-      showMenuCards();
     }
+    // Always show menu cards when panel opens
+    showMenuCards();
   }
 
   function closePanel() {
