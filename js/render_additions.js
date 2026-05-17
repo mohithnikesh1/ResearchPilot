@@ -1,8 +1,6 @@
-
-
 // ─── New exports for Altmetric + Related Works ────────────────────────────
 // HF_BASE duplicated here so render.js stays self-contained
-const _HF = "https://nikeshn-researchbee.hf.space";
+const _HF = "https://mohithnikesh-researchpilot.hf.space";
 
 export function renderAltmetricPlaceholder(issn) {
   if (!issn) return "";
