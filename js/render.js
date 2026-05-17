@@ -1,12 +1,12 @@
 // render.js - shared rendering helpers
 
 const MASCOT = "assets/researchbeemascot.png";
-const _HF    = "https://nikeshn-researchbee.hf.space";
+const _HF    = "https://mohithnikesh-researchpilot.hf.space";
 
 export function renderMascotRow(message) {
   return `
     <div class="results-mascot-row">
-      <img src="${MASCOT}" class="results-mascot-img" alt="ResearchBee">
+      <img src="${MASCOT}" class="results-mascot-img" alt="ResearchPilot">
       <div class="results-mascot-bubble">${message}</div>
     </div>`;
 }
@@ -122,55 +122,14 @@ export function renderRankingBlock(r) {
     </div>`;
 }
 
-export function renderKhaznaCard(k, mode = "article") {
-  const tip = mode === "data"
-    ? "Even if depositing data in a domain-specific repository, always register metadata in Khazna so your work appears in KU's research portfolio."
-    : "Deposit your accepted manuscript (or metadata record if under embargo) to Khazna for KU institutional visibility and compliance.";
-  return `
-    <div class="khazna-card">
-      <div class="khazna-head">
-        <span style="font-size:22px">🏛️</span>
-        <div>
-          <h3>Khazna — KU Institutional Repository</h3>
-          <div style="font-size:12px;opacity:.8">khazna.ku.ac.ae</div>
-        </div>
-      </div>
-      <div class="khazna-body">
-        <p>${esc(k.message || tip)}</p>
-        <div class="khazna-tip"><span>💡</span><span>${esc(tip)}</span></div>
-        <div class="khazna-actions">
-          <a href="${esc(k.url || "https://khazna.ku.ac.ae")}" target="_blank" class="k-btn k-btn-fill">🔗 Visit Khazna</a>
-          <a href="mailto:${esc(k.contact || "khazna@ku.ac.ae")}" class="k-btn k-btn-outline">✉ khazna@ku.ac.ae</a>
-          <a href="${esc(k.library_url || "https://library.ku.ac.ae/lib")}" target="_blank" class="k-btn k-btn-outline">📚 KU Library</a>
-        </div>
-      </div>
-    </div>`;
-}
 
-export function renderHelpCard() {
-  return `
-    <div class="help-card">
-      <div class="help-left">
-        <span class="help-icon">📚</span>
-        <div class="help-text">
-          <h4>Need help? Contact KU Library</h4>
-          <p>Not sure what to deposit, which version, or how? Our librarians can advise on open access, self-archiving, and research data management.</p>
-        </div>
-      </div>
-      <div class="help-links">
-        <a href="mailto:library@ku.ac.ae" class="k-btn k-btn-fill" style="font-size:12px;padding:7px 14px">✉ Contact Library</a>
-        <a href="https://library.ku.ac.ae/lib" target="_blank" class="k-btn k-btn-outline" style="font-size:12px;padding:7px 14px">🔗 Library Website</a>
-      </div>
-    </div>`;
-}
 
 export function renderRepoCard(r, idx) {
-  const isKhazna = r.is_khazna;
   const vl = r.verify_links || {};
   return `
-    <div class="card j-card r-card ${isKhazna ? "is-khazna" : ""}">
+    <div class="card j-card r-card">
       <div class="j-header">
-        <div class="j-meta">#${idx + 1} · ${esc(r.type)} · ${esc(r.cost)}${isKhazna ? " · KU Institutional" : ""}</div>
+        <div class="j-meta">#${idx + 1} · ${esc(r.type)} · ${esc(r.cost)}</div>
         <div class="j-title">
           ${esc(r.name)}
           ${r.url ? `<a href="${esc(r.url)}" target="_blank" style="font-size:14px;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--primary);margin-left:8px">↗ visit</a>` : ""}
@@ -200,17 +159,11 @@ export function renderRepoCard(r, idx) {
         ${r.funder_compliance_note ? `<div class="policy-notes"><p><strong>Funder compliance:</strong> ${esc(r.funder_compliance_note)}</p></div>` : ""}
         ${r.risk_flag ? `<p style="color:var(--danger);font-size:13px;display:flex;gap:6px;align-items:flex-start"><span>[!]</span><span>${esc(r.risk_flag)}</span></p>` : ""}
         <p style="font-size:12px"><strong>Verification:</strong> ${esc(r.verification_status)}</p>
-        ${!isKhazna ? `
-          <div class="verify-row">
-            <span class="verify-lbl">Verify on:</span>
-            ${vl.re3data     ? `<a href="${esc(vl.re3data)}"     target="_blank" class="vlink">re3data ↗</a>` : ""}
-            ${vl.fairsharing ? `<a href="${esc(vl.fairsharing)}" target="_blank" class="vlink">FAIRsharing ↗</a>` : ""}
-          </div>` : `
-          <div class="verify-row">
-            <span class="verify-lbl">Contact:</span>
-            <a href="mailto:khazna@ku.ac.ae" class="vlink">khazna@ku.ac.ae</a>
-            <a href="https://khazna.ku.ac.ae" target="_blank" class="vlink">khazna.ku.ac.ae ↗</a>
-          </div>`}
+        <div class="verify-row">
+          <span class="verify-lbl">Verify on:</span>
+          ${vl.re3data    ? `<a href="${esc(vl.re3data)}"    target="_blank" class="vlink">re3data ↗</a>` : ""}
+          ${vl.fairsharing? `<a href="${esc(vl.fairsharing)}" target="_blank" class="vlink">FAIRsharing ↗</a>` : ""}
+        </div>
       </div>
     </div>`;
 }
