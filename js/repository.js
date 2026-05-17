@@ -2,8 +2,7 @@
 import { callAPI, getModel, getLanguage } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
-  esc, renderRepoCard, renderKhaznaCard,
-  renderHelpCard, renderNextActions, renderMascotRow
+  esc, renderRepoCard,
 } from "./render.js";
 
 export function repositoryTab() {
@@ -107,26 +106,6 @@ function renderDepositStrategy(s) {
           <div class="rec-item"><dt>Secondary choice</dt><dd>${esc(s.secondary_choice)}</dd></div>
           <div class="rec-item" style="grid-column:1/-1"><dt>Metadata standard</dt><dd>${esc(s.metadata_standard)}</dd></div>
         </dl>
-        ${s.khazna_metadata_note ? `
-          <div class="khazna-tip" style="background:var(--primary-xlight);border-color:var(--primary-light)">
-            <span>️</span><span style="color:var(--primary)">${esc(s.khazna_metadata_note)}</span>
-          </div>` : ""}
-        ${s.deposit_workflow?.length ? `
-          <div>
-            <h5 style="font-size:13px;font-weight:600;margin-bottom:6px">🔄 Deposit workflow</h5>
-            <ol style="list-style:decimal;padding-left:18px;display:flex;flex-direction:column;gap:4px">
-              ${s.deposit_workflow.map(w => `<li style="font-size:13px;color:var(--text-muted)">${esc(w)}</li>`).join("")}
-            </ol>
-          </div>` : ""}
-        ${s.manual_checks_required?.length ? `
-          <div>
-            <h5 style="font-size:13px;font-weight:600;margin-bottom:6px">[!] Manual checks required</h5>
-            <ul class="checks-list">${s.manual_checks_required.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
-          </div>` : ""}
-      </div>
-    </div>`;
-}
-
 function renderRepoResults(result, container) {
   const repos = result.repositories || [];
   container.innerHTML = `
@@ -146,7 +125,6 @@ function renderRepoResults(result, container) {
 
     ${renderDepositStrategy(result.deposit_strategy)}
     ${renderNextActions(result.next_actions, result.global_notes)}
-    ${renderHelpCard()}
   `;
 
   document.getElementById("repo-reset")?.addEventListener("click", () => {
