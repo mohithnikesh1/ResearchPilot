@@ -4,13 +4,13 @@ import { showProgress, setStep, doneProgress } from "./app.js";
 import {
   esc, quartileBadge, confidenceBadge, oaStatusBadge,
   renderVersionBlock, renderVerifyLinks, renderOpenAlexMetrics,
-  renderRankingBlock, renderKhaznaCard, renderHelpCard,
+  renderRankingBlock,
   renderNextActions, renderManuscriptUnderstanding, renderMascotRow,
   renderSubmissionChecklist, renderCoverLetterBtn,
   renderRelatedWorksAccordion, renderAltmetricPlaceholder, loadAltmetricBadge
 } from "./render.js";
 
-const HF_BASE = "https://nikeshn-researchbee.hf.space";
+const HF_BASE = "https://mohithnikesh-researchpilot.hf.space";
 
 export function journalTab() {
   const form    = document.getElementById("journal-form");
@@ -198,7 +198,6 @@ function renderRepoRecommendation(r) {
           <div class="rec-item"><dt>Embargoed deposit needed</dt><dd>${esc(r.embargoed_deposit_needed)}</dd></div>
           <div class="rec-item"><dt>Metadata-only first</dt><dd>${esc(r.metadata_only_first)}</dd></div>
         </dl>
-        ${r.khazna_note ? `<div class="policy-notes"><p><strong>Khazna note:</strong> ${esc(r.khazna_note)}</p></div>` : ""}
         ${r.manual_checks_required?.length ? `
           <div>
             <h5 style="font-size:13px;font-weight:600;margin-bottom:6px">[!] Manual checks required</h5>
@@ -230,9 +229,7 @@ function renderJournalResults(result, container) {
     ${renderExtendedList(extended)}
 
     ${renderRepoRecommendation(result.repository_recommendation)}
-    ${result.khazna ? renderKhaznaCard(result.khazna, "article") : ""}
     ${renderNextActions(result.next_actions, result.global_notes)}
-    ${renderHelpCard()}
   `;
 
   // Wire export buttons
