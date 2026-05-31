@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ResearchPilot — AI Publishing Assistant</title>
-  <meta name="description" content="Find the right journal. Check your rights. Deposit to the right repository. AI-powered publishing and repository assistant for researchers.">
+  <meta name="description" content="Find the right journal. Check your rights. Deposit to the right repository. AI-powered publishing and repository assistant for UW-Madison researchers.">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/researchbeemascot.png">
   <style>
@@ -20,80 +20,27 @@
       transition: transform .2s, box-shadow .2s; outline: none;
       min-width: 0;
     }
-    #rb-chat-launcher:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(67,56,202,.55);
-    }
+    #rb-chat-launcher:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(67,56,202,.55); }
     #rb-chat-launcher:active { transform: translateY(0); }
-
-    /* Question mark icon */
     .rb-launcher-icon {
       width: 38px; height: 38px; border-radius: 50%;
-      background: rgba(255,255,255,.15);
-      border: 2px solid rgba(255,255,255,.3);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
       font-family: 'DM Serif Display', Georgia, serif;
-      font-size: 22px; font-weight: 700;
-      color: #fff; line-height: 1;
-      transition: background .2s;
+      font-size: 22px; font-weight: 700; color: #fff; line-height: 1; transition: background .2s;
     }
-    #rb-chat-launcher:hover .rb-launcher-icon {
-      background: rgba(255,255,255,.25);
-    }
-
-    /* Label text */
-    .rb-launcher-label {
-      display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
-    }
-    .rb-launcher-label-top {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 700;
-      color: rgba(255,255,255,.7);
-      line-height: 1.2; letter-spacing: .01em;
-      text-transform: uppercase;
-    }
-    .rb-launcher-label-main {
-      font-family: 'DM Serif Display', Georgia, serif;
-      font-size: 14px; font-weight: 400;
-      color: #fff; line-height: 1.2; white-space: nowrap;
-    }
-
-    #rb-chat-badge {
-      position: absolute; top: -4px; right: -4px;
-      width: 14px; height: 14px; background: #F59E0B;
-      border-radius: 50%; border: 2px solid #fff; display: none;
-    }
+    #rb-chat-launcher:hover .rb-launcher-icon { background: rgba(255,255,255,.25); }
+    .rb-launcher-label { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+    .rb-launcher-label-top { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.7); line-height: 1.2; letter-spacing: .01em; text-transform: uppercase; }
+    .rb-launcher-label-main { font-family: 'DM Serif Display', Georgia, serif; font-size: 14px; font-weight: 400; color: #fff; line-height: 1.2; white-space: nowrap; }
+    #rb-chat-badge { position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; background: #F59E0B; border-radius: 50%; border: 2px solid #fff; display: none; }
     #rb-chat-badge.visible { display: block; }
-    #rb-chat-tooltip {
-      position: fixed; bottom: 108px; right: 28px; z-index: 999;
-      background: #1a2744; color: #fff; font-family: 'DM Sans',sans-serif;
-      font-size: 13px; padding: 8px 14px; border-radius: 10px;
-      white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,.18);
-      pointer-events: none; opacity: 0; transform: translateY(6px);
-      transition: opacity .3s, transform .3s;
-    }
-    #rb-chat-tooltip::after {
-      content: ''; position: absolute; bottom: -6px; right: 22px;
-      border-left: 6px solid transparent; border-right: 6px solid transparent;
-      border-top: 6px solid #1a2744;
-    }
+    #rb-chat-tooltip { position: fixed; bottom: 108px; right: 28px; z-index: 999; background: #1a2744; color: #fff; font-family: 'DM Sans',sans-serif; font-size: 13px; padding: 8px 14px; border-radius: 10px; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,.18); pointer-events: none; opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+    #rb-chat-tooltip::after { content: ''; position: absolute; bottom: -6px; right: 22px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #1a2744; }
     #rb-chat-tooltip.show { opacity: 1; transform: translateY(0); }
-    #rb-chat-panel {
-      position: fixed; bottom: 98px; right: 28px; z-index: 999;
-      width: 370px; max-height: 560px;
-      background: #fff; border-radius: 18px;
-      box-shadow: 0 12px 48px rgba(26,39,68,.18), 0 2px 8px rgba(0,0,0,.08);
-      display: flex; flex-direction: column; overflow: hidden;
-      transform: scale(0.92) translateY(12px); transform-origin: bottom right;
-      opacity: 0; pointer-events: none;
-      transition: opacity .22s, transform .22s;
-    }
+    #rb-chat-panel { position: fixed; bottom: 98px; right: 28px; z-index: 999; width: 370px; max-height: 560px; background: #fff; border-radius: 18px; box-shadow: 0 12px 48px rgba(26,39,68,.18), 0 2px 8px rgba(0,0,0,.08); display: flex; flex-direction: column; overflow: hidden; transform: scale(0.92) translateY(12px); transform-origin: bottom right; opacity: 0; pointer-events: none; transition: opacity .22s, transform .22s; }
     #rb-chat-panel.open { opacity: 1; transform: scale(1) translateY(0); pointer-events: all; }
-    .rb-chat-header {
-      background: linear-gradient(135deg, #1a2744 0%, #2d3f6b 100%);
-      padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-    }
+    .rb-chat-header { background: linear-gradient(135deg, #1a2744 0%, #2d3f6b 100%); padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .rb-chat-header img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); object-fit: cover; flex-shrink: 0; }
     .rb-chat-header-text { flex: 1; min-width: 0; }
     .rb-chat-header-name { font-family: 'DM Serif Display',serif; font-size: 15px; color: #fff; display: block; line-height: 1.2; }
@@ -117,9 +64,6 @@
     .rb-typing span { width: 7px; height: 7px; background: #94a3b8; border-radius: 50%; display: inline-block; animation: rb-bounce 1.2s infinite ease-in-out; }
     .rb-typing span:nth-child(2){animation-delay:.15s} .rb-typing span:nth-child(3){animation-delay:.30s}
     @keyframes rb-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
-    .rb-starters { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-    .rb-starter-btn { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 12px; font-family: 'DM Sans',sans-serif; font-size: 12.5px; color: #4338CA; cursor: pointer; text-align: left; transition: background .15s, border-color .15s; line-height: 1.4; }
-    .rb-starter-btn:hover { background: #EEF2FF; border-color: #4338CA; }
     .rb-route-btn { border: none; border-radius: 10px; padding: 9px 14px; font-family: 'DM Sans',sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: opacity .15s; margin-top: 4px; color: white; }
     .rb-route-btn:hover { opacity: 0.88; }
     .rb-chat-input-wrap { padding: 10px 12px 12px; border-top: 1px solid #f1f5f9; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #fff; }
@@ -129,187 +73,16 @@
     #rb-chat-send { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg,#4338CA,#3730a3); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s, transform .1s; }
     #rb-chat-send:hover { opacity: .9; } #rb-chat-send:active { transform: scale(.93); } #rb-chat-send:disabled { opacity: .4; cursor: not-allowed; }
     .rb-chat-footer { padding: 5px 14px 8px; text-align: center; font-family: 'DM Sans',sans-serif; font-size: 10.5px; color: #94a3b8; flex-shrink: 0; }
-    .rb-chat-footer a { color: #94a3b8; text-decoration: none; }
-    @media(max-width:480px){
-      #rb-chat-panel{width:calc(100vw - 32px);right:16px;bottom:96px}
-      #rb-chat-launcher{right:16px;bottom:16px;padding:8px 14px 8px 10px}
-      .rb-launcher-label-main{font-size:13px}
-      #rb-chat-tooltip{right:16px;bottom:120px}
-    }
-    /* ── Light bar + always-bright coloured tabs, glowing border when selected ─ */
-    .tabs-bar {
-      background: #e8ecf2 !important;
-      box-shadow: 0 2px 12px rgba(0,0,0,.1) !important;
-      border-bottom: none !important;
-      padding-bottom: 0 !important;
-    }
-    .tabs-inner { padding: 8px 10px 0 10px !important; gap: 6px !important; align-items: flex-end !important; }
 
-    .tab-btn {
-      border-bottom: 3px solid transparent !important;
-      border-radius: 10px 10px 0 0 !important;
-      margin: 0 !important; min-width: 0 !important;
-      transition: filter .18s, transform .15s, box-shadow .18s !important;
-      padding: 10px 14px !important;
-      outline: 2px solid transparent !important;
-      outline-offset: 0px !important;
-    }
+    /* ── Example chips ── */
+    .rb-chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-top: 1px solid #f1f5f9; background: #fff; flex-shrink: 0; }
+    .rb-chip { background: #f8fafc; border: 1.5px solid #e2e8f0; color: #4338CA; border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; text-align: left; }
+    .rb-chip:hover { background: #EEF2FF; border-color: #4338CA; }
 
-    /* All tabs always full bright colour */
-    .tab-btn[data-tab="journals"] { background: #1a2744 !important; }
-    .tab-btn[data-tab="license"]  { background: #065f46 !important; }
-    .tab-btn[data-tab="data"]     { background: #92400e !important; }
-
-    /* Hover — slight lift */
-    .tab-btn:hover { filter: brightness(1.12) !important; transform: translateY(-1px) !important; }
-
-    /* Active — same colour, glowing border top + sides, stronger lift */
-    .tab-btn.active[data-tab="journals"] {
-      background: #1a2744 !important;
-      border-bottom-color: #a5b4fc !important;
-      transform: translateY(-3px) !important;
-      box-shadow: 0 -3px 0 2px #a5b4fc, 0 -6px 16px rgba(99,102,241,.35) !important;
-    }
-    .tab-btn.active[data-tab="license"] {
-      background: #065f46 !important;
-      border-bottom-color: #6ee7b7 !important;
-      transform: translateY(-3px) !important;
-      box-shadow: 0 -3px 0 2px #6ee7b7, 0 -6px 16px rgba(5,150,105,.35) !important;
-    }
-    .tab-btn.active[data-tab="data"] {
-      background: #92400e !important;
-      border-bottom-color: #fcd34d !important;
-      transform: translateY(-3px) !important;
-      box-shadow: 0 -3px 0 2px #fcd34d, 0 -6px 16px rgba(217,119,6,.35) !important;
-    }
-
-    /* Text — all tabs white always */
-    .tab-label-main {
-      font-size: 13px !important; font-weight: 600 !important;
-      color: rgba(255,255,255,.82) !important;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .tab-label-sub { color: rgba(255,255,255,.5) !important; font-size: 10.5px !important; }
-    .tab-btn.active .tab-label-main { color: #fff !important; }
-    .tab-btn.active .tab-label-sub  { color: rgba(255,255,255,.75) !important; }
-    .tab-btn:hover  .tab-label-main { color: #fff !important; }
-
-    /* Icons */
-    .tab-icon-wrap { background: rgba(255,255,255,.15) !important; color: rgba(255,255,255,.85) !important; }
-    .tab-btn.active .tab-icon-wrap { background: rgba(255,255,255,.22) !important; color: #fff !important; }
-
-    /* Mobile — all 3 always visible */
-    @media(max-width:600px) {
-      .tabs-inner { padding: 6px 6px 0 6px !important; gap: 4px !important; }
-      .tab-btn { padding: 8px 6px !important; gap: 5px !important; flex: 1 !important; border-radius: 8px 8px 0 0 !important; }
-      .tab-btn:hover { transform: translateY(0) !important; }
-      .tab-btn.active { transform: translateY(-2px) !important; }
-      .tab-icon-wrap { width: 24px !important; height: 24px !important; font-size: 12px !important; border-radius: 6px !important; flex-shrink: 0 !important; }
-      .tab-label-main { font-size: 11px !important; }
-      .tab-label-sub  { display: none !important; }
-    }
-    @media(max-width:360px) {
-      .tabs-inner { padding: 5px 3px 0 3px !important; gap: 3px !important; }
-      .tab-btn { padding: 7px 3px !important; gap: 3px !important; }
-      .tab-label-main { font-size: 10px !important; }
-      .tab-icon-wrap { width: 20px !important; height: 20px !important; font-size: 10px !important; }
-    }
-
-    /* ── Mobile slim chat bar — sticky ABOVE tabs ────────────────────────────── */
-    #rb-mobile-chat-bar { display: none; }
-    @media(max-width:600px) {
-      #rb-chat-launcher { display: none !important; }
-      #rb-chat-tooltip  { display: none !important; }
-      #rb-mobile-chat-bar {
-        display: flex !important;
-        position: sticky; top: 0; z-index: 95;
-        width: 100%;
-        background: linear-gradient(90deg, #1a2744 0%, #4338CA 100%);
-        align-items: center;
-        padding: 7px 14px; gap: 9px;
-        cursor: pointer; border: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,.25);
-        font-family: 'DM Sans', sans-serif;
-      }
-      .rb-mobile-bar-icon {
-        width: 26px; height: 26px; border-radius: 50%;
-        background: rgba(255,255,255,.15);
-        border: 1.5px solid rgba(255,255,255,.35);
-        display: flex; align-items: center; justify-content: center;
-        font-family: 'DM Serif Display', Georgia, serif;
-        font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;
-      }
-      .rb-mobile-bar-text { display: flex; align-items: baseline; gap: 5px; flex: 1; }
-      .rb-mobile-bar-top  { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .05em; }
-      .rb-mobile-bar-main { font-size: 12px; font-weight: 500; color: #fff; }
-      .rb-mobile-bar-arrow { font-size: 14px; color: rgba(255,255,255,.6); margin-left: auto; flex-shrink: 0; }
-      /* Chat panel slides from top */
-      #rb-chat-panel {
-        bottom: auto !important; top: 0 !important;
-        right: 0 !important; left: 0 !important;
-        width: 100% !important; max-height: 78vh !important;
-        border-radius: 0 0 18px 18px !important;
-        transform-origin: top center !important;
-      }
-    }
-
-    /* ── Mobile chat slim bar — sticky below header, above tabs ─────────────── */
-    #rb-mobile-chat-bar { display: none; }
-
-    @media(max-width:600px) {
-      /* Hide desktop pill launcher */
-      #rb-chat-launcher { display: none !important; }
-      #rb-chat-tooltip  { display: none !important; }
-
-      /* Slim sticky bar */
-      #rb-mobile-chat-bar {
-        display: flex !important;
-        position: sticky;
-        top: 0;
-        z-index: 91;   /* above tabs bar z-index:90 */
-        width: 100%;
-        background: linear-gradient(90deg, #1a2744 0%, #4338CA 100%);
-        align-items: center;
-        padding: 7px 14px;
-        gap: 9px;
-        cursor: pointer;
-        border: none;
-        box-shadow: 0 1px 6px rgba(0,0,0,.25);
-        font-family: 'DM Sans', sans-serif;
-      }
-      .rb-mobile-bar-icon {
-        width: 26px; height: 26px; border-radius: 50%;
-        background: rgba(255,255,255,.15);
-        border: 1.5px solid rgba(255,255,255,.3);
-        display: flex; align-items: center; justify-content: center;
-        font-family: 'DM Serif Display', Georgia, serif;
-        font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;
-      }
-      .rb-mobile-bar-text {
-        display: flex; align-items: baseline; gap: 5px; flex: 1;
-      }
-      .rb-mobile-bar-top {
-        font-size: 11px; font-weight: 700;
-        color: rgba(255,255,255,.6);
-        text-transform: uppercase; letter-spacing: .05em;
-      }
-      .rb-mobile-bar-main {
-        font-size: 12px; font-weight: 500; color: #fff;
-      }
-      .rb-mobile-bar-arrow {
-        font-size: 14px; color: rgba(255,255,255,.6);
-        margin-left: auto; flex-shrink: 0;
-      }
-
-      /* Chat panel — slides from top on mobile */
-      #rb-chat-panel {
-        bottom: auto !important; top: 0 !important;
-        right: 0 !important; left: 0 !important;
-        width: 100% !important; max-height: 78vh !important;
-        border-radius: 0 0 18px 18px !important;
-        transform-origin: top center !important;
-      }
-    }
+    /* ── UW-Madison APC note ── */
+    .uw-apc-note { background: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #713f12; margin: 12px 0; display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
+    .uw-apc-note a { color: #92400e; font-weight: 600; text-decoration: underline; white-space: nowrap; }
+    .uw-apc-note a:hover { color: #78350f; }
 
     /* ── Streaming cursor ── */
     @keyframes rb-blink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -336,37 +109,68 @@
     .rw-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--text-muted); }
     .rw-src { font-size: 10px; color: var(--text-light); margin-top: 8px; }
 
-    /* ── Menu cards ── */
-    .rb-menu-wrap { display: flex; flex-direction: column; gap: 7px; width: 100%; margin-top: 4px; }
-    .rb-menu-card {
-      display: flex; align-items: center; gap: 10px;
-      background: #fff; border: 1.5px solid #e2e8f0;
-      border-radius: 12px; padding: 10px 12px;
-      cursor: pointer; text-align: left; width: 100%;
-      transition: border-color .15s, box-shadow .15s, transform .1s;
-      font-family: 'DM Sans', sans-serif;
+    /* ── Light bar + always-bright coloured tabs ── */
+    .tabs-bar { background: #e8ecf2 !important; box-shadow: 0 2px 12px rgba(0,0,0,.1) !important; border-bottom: none !important; padding-bottom: 0 !important; }
+    .tabs-inner { padding: 8px 10px 0 10px !important; gap: 6px !important; align-items: flex-end !important; }
+    .tab-btn { border-bottom: 3px solid transparent !important; border-radius: 10px 10px 0 0 !important; margin: 0 !important; min-width: 0 !important; transition: filter .18s, transform .15s, box-shadow .18s !important; padding: 10px 14px !important; outline: 2px solid transparent !important; outline-offset: 0px !important; }
+    .tab-btn[data-tab="journals"] { background: #1a2744 !important; }
+    .tab-btn[data-tab="license"]  { background: #065f46 !important; }
+    .tab-btn[data-tab="data"]     { background: #92400e !important; }
+    .tab-btn:hover { filter: brightness(1.12) !important; transform: translateY(-1px) !important; }
+    .tab-btn.active[data-tab="journals"] { background: #1a2744 !important; border-bottom-color: #a5b4fc !important; transform: translateY(-3px) !important; box-shadow: 0 -3px 0 2px #a5b4fc, 0 -6px 16px rgba(99,102,241,.35) !important; }
+    .tab-btn.active[data-tab="license"]  { background: #065f46 !important; border-bottom-color: #6ee7b7 !important; transform: translateY(-3px) !important; box-shadow: 0 -3px 0 2px #6ee7b7, 0 -6px 16px rgba(5,150,105,.35) !important; }
+    .tab-btn.active[data-tab="data"]     { background: #92400e !important; border-bottom-color: #fcd34d !important; transform: translateY(-3px) !important; box-shadow: 0 -3px 0 2px #fcd34d, 0 -6px 16px rgba(217,119,6,.35) !important; }
+    .tab-label-main { font-size: 13px !important; font-weight: 600 !important; color: rgba(255,255,255,.82) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tab-label-sub { color: rgba(255,255,255,.5) !important; font-size: 10.5px !important; }
+    .tab-btn.active .tab-label-main { color: #fff !important; }
+    .tab-btn.active .tab-label-sub  { color: rgba(255,255,255,.75) !important; }
+    .tab-btn:hover  .tab-label-main { color: #fff !important; }
+    .tab-icon-wrap { background: rgba(255,255,255,.15) !important; color: rgba(255,255,255,.85) !important; }
+    .tab-btn.active .tab-icon-wrap { background: rgba(255,255,255,.22) !important; color: #fff !important; }
+
+    /* Mobile tabs */
+    @media(max-width:600px) {
+      .tabs-inner { padding: 6px 6px 0 6px !important; gap: 4px !important; }
+      .tab-btn { padding: 8px 6px !important; gap: 5px !important; flex: 1 !important; border-radius: 8px 8px 0 0 !important; }
+      .tab-btn:hover { transform: translateY(0) !important; }
+      .tab-btn.active { transform: translateY(-2px) !important; }
+      .tab-icon-wrap { width: 24px !important; height: 24px !important; font-size: 12px !important; border-radius: 6px !important; flex-shrink: 0 !important; }
+      .tab-label-main { font-size: 11px !important; }
+      .tab-label-sub  { display: none !important; }
     }
-    .rb-menu-card:hover {
-      border-color: #4338CA;
-      box-shadow: 0 2px 10px rgba(67,56,202,.12);
-      transform: translateY(-1px);
+    @media(max-width:360px) {
+      .tabs-inner { padding: 5px 3px 0 3px !important; gap: 3px !important; }
+      .tab-btn { padding: 7px 3px !important; gap: 3px !important; }
+      .tab-label-main { font-size: 10px !important; }
+      .tab-icon-wrap { width: 20px !important; height: 20px !important; font-size: 10px !important; }
     }
-    .rb-menu-card:active { transform: translateY(0); }
-    .rb-menu-emoji { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
-    .rb-menu-text { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-    .rb-menu-title { font-size: 12.5px; font-weight: 600; color: #1e293b; line-height: 1.3; }
-    .rb-menu-desc  { font-size: 11px; color: #94a3b8; line-height: 1.4; }
-    .rb-menu-arrow { font-size: 16px; font-weight: 700; flex-shrink: 0; transition: transform .15s; }
-    .rb-menu-card:hover .rb-menu-arrow { transform: translateX(3px); }
-    /* Clear button */
-    .rb-clear-btn {
-      align-self: flex-end; margin-top: 2px;
-      background: none; border: 1px solid #e2e8f0;
-      border-radius: 8px; padding: 4px 12px;
-      font-family: 'DM Sans', sans-serif; font-size: 11.5px;
-      color: #94a3b8; cursor: pointer; transition: border-color .15s, color .15s;
+
+    /* Mobile chat bar */
+    #rb-mobile-chat-bar { display: none; }
+    @media(max-width:600px) {
+      #rb-chat-launcher { display: none !important; }
+      #rb-chat-tooltip  { display: none !important; }
+      #rb-mobile-chat-bar {
+        display: flex !important; position: sticky; top: 0; z-index: 91; width: 100%;
+        background: linear-gradient(90deg, #1a2744 0%, #4338CA 100%);
+        align-items: center; padding: 7px 14px; gap: 9px;
+        cursor: pointer; border: none; box-shadow: 0 1px 6px rgba(0,0,0,.25);
+        font-family: 'DM Sans', sans-serif;
+      }
+      .rb-mobile-bar-icon { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', Georgia, serif; font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0; }
+      .rb-mobile-bar-text { display: flex; align-items: baseline; gap: 5px; flex: 1; }
+      .rb-mobile-bar-top  { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .05em; }
+      .rb-mobile-bar-main { font-size: 12px; font-weight: 500; color: #fff; }
+      .rb-mobile-bar-arrow { font-size: 14px; color: rgba(255,255,255,.6); margin-left: auto; flex-shrink: 0; }
+      #rb-chat-panel { bottom: auto !important; top: 0 !important; right: 0 !important; left: 0 !important; width: 100% !important; max-height: 78vh !important; border-radius: 0 0 18px 18px !important; transform-origin: top center !important; }
     }
-    .rb-clear-btn:hover { border-color: #cbd5e1; color: #64748b; }
+
+    @media(max-width:480px){
+      #rb-chat-panel{width:calc(100vw - 32px);right:16px;bottom:96px}
+      #rb-chat-launcher{right:16px;bottom:16px;padding:8px 14px 8px 10px}
+      .rb-launcher-label-main{font-size:13px}
+      #rb-chat-tooltip{right:16px;bottom:120px}
+    }
   </style>
 </head>
 <body>
@@ -381,7 +185,6 @@
       </div>
     </a>
   </div>
-  <!-- Language bar only — model selector removed -->
   <div class="model-bar">
     <div class="model-bar-inner">
       <span class="model-label">Language:</span>
@@ -496,8 +299,8 @@
                 <div class="form-group"><label for="j-speed" id="lbl-speed">Publication speed</label><select id="j-speed"><option>Standard</option><option>Fast turnaround preferred</option><option>No preference</option></select></div>
                 <div class="form-group"><label for="j-repo-target" id="lbl-repo-target">Repository target</label><select id="j-repo-target"><option>Institutional repository</option><option>Subject repository</option><option>Both</option><option>Not sure</option></select></div>
                 <div class="form-group"><label for="j-funder" id="lbl-funder">Funder</label><input id="j-funder" type="text" placeholder="e.g. ERC, NIH, Wellcome, cOAlition S"></div>
-                <div class="form-group"><label for="j-institution" id="lbl-institution">Institution</label><input id="j-institution" type="text" placeholder="e.g. your university"></div>
-                <div class="form-group"><label for="j-country" id="lbl-country">Country / region</label><input id="j-country" type="text" placeholder="e.g. UAE"></div>
+                <div class="form-group"><label for="j-institution" id="lbl-institution">Institution</label><input id="j-institution" type="text" placeholder="e.g. University of Wisconsin-Madison"></div>
+                <div class="form-group"><label for="j-country" id="lbl-country">Country / region</label><input id="j-country" type="text" placeholder="e.g. United States"></div>
                 <div class="form-group"><label for="j-audience" id="lbl-audience">Target audience</label><input id="j-audience" type="text" placeholder="e.g. library practitioners, AI researchers"></div>
                 <div class="form-group form-full"><label for="j-preferred" id="lbl-preferred">Preferred journals (optional)</label><input id="j-preferred" type="text" placeholder="e.g. Nature Communications, PLOS ONE"></div>
                 <div class="form-group form-full"><label for="j-avoid" id="lbl-avoid">Journals to avoid (optional)</label><input id="j-avoid" type="text" placeholder="Journals to exclude from recommendations"></div>
@@ -547,7 +350,7 @@
       <div class="card">
         <div class="card-header">
           <h2>🗄 Find a research data repository</h2>
-          <p>Describe your dataset. We'll match it to domain-specific and generalist repositories (re3data, FAIRsharing, OpenAIRE, Zenodo, and more).</p>
+          <p>Describe your dataset. We'll match it to domain-specific and generalist repositories (re3data, FAIRsharing, OpenAIRE, Zenodo, and more). UW-Madison researchers: Dryad and MINDS@UW are available free of charge.</p>
         </div>
         <div class="card-body">
           <div class="form-grid form-2col">
@@ -564,7 +367,7 @@
               <div class="form-group"><label for="r-sensitivity" id="lbl-r-sensitivity">Sensitivity classification</label><select id="r-sensitivity"><option>Open</option><option>Restricted</option><option>Sensitive</option><option>Mixed</option></select></div>
               <div class="form-group"><label for="r-personal" id="lbl-r-personal">Contains personal / health data?</label><select id="r-personal"><option>No</option><option>Yes — anonymised</option><option>Yes — pseudonymised</option><option>Yes — identifiable</option><option>Unsure</option></select></div>
               <div class="form-group"><label for="r-licence" id="lbl-r-licence">Intended licence</label><select id="r-licence"><option>CC BY</option><option>CC0</option><option>CC BY-NC</option><option>CC BY-SA</option><option>CC BY-NC-SA</option><option>Restricted / custom</option><option>Not sure</option></select></div>
-              <div class="form-group"><label for="r-embargo" id="lbl-r-embargo">Embargo required?</label><select id="r-embargo"><option>No</option><option>Yes — short (6 months)</option><option>Yes — long (6 months)</option><option>Unsure</option></select></div>
+              <div class="form-group"><label for="r-embargo" id="lbl-r-embargo">Embargo required?</label><select id="r-embargo"><option>No</option><option>Yes — short (6 months)</option><option>Yes — long (12+ months)</option><option>Unsure</option></select></div>
               <div class="form-group"><label for="r-doi" id="lbl-r-doi">Persistent identifier (DOI) required?</label><select id="r-doi"><option>Yes</option><option>No</option><option>Unsure</option></select></div>
               <div class="form-group"><label for="r-versioning" id="lbl-r-versioning">Versioning required?</label><select id="r-versioning"><option>Yes</option><option>No</option><option>Unsure</option></select></div>
             </div>
@@ -572,10 +375,10 @@
           <div class="section-sep">
             <div class="section-label">Context</div>
             <div class="form-grid form-2col">
-              <div class="form-group"><label for="r-funder" id="lbl-r-funder">Funder</label><input id="r-funder" type="text" placeholder="e.g. Horizon Europe, NIH, ERC, ADEK"></div>
-              <div class="form-group"><label for="r-institution" id="lbl-r-institution">Institution</label><input id="r-institution" type="text" placeholder="e.g. your university"></div>
-              <div class="form-group"><label for="r-country" id="lbl-r-country">Country / region</label><input id="r-country" type="text" placeholder="e.g. UAE"></div>
-              <div class="form-group"><label for="r-preferred" id="lbl-r-preferred">Preferred / required repository (optional)</label><input id="r-preferred" type="text" placeholder="e.g. Zenodo, GenBank"></div>
+              <div class="form-group"><label for="r-funder" id="lbl-r-funder">Funder</label><input id="r-funder" type="text" placeholder="e.g. NIH, NSF, Horizon Europe, USDA"></div>
+              <div class="form-group"><label for="r-institution" id="lbl-r-institution">Institution</label><input id="r-institution" type="text" placeholder="e.g. University of Wisconsin-Madison"></div>
+              <div class="form-group"><label for="r-country" id="lbl-r-country">Country / region</label><input id="r-country" type="text" placeholder="e.g. United States"></div>
+              <div class="form-group"><label for="r-preferred" id="lbl-r-preferred">Preferred / required repository (optional)</label><input id="r-preferred" type="text" placeholder="e.g. Dryad, Zenodo, GenBank"></div>
               <div class="form-group form-full"><label for="r-publication" id="lbl-r-publication">Linked publication / DOI (optional)</label><input id="r-publication" type="text" placeholder="Related article DOI or title"></div>
               <div class="form-group form-full"><label for="r-notes" id="lbl-r-notes">Additional notes</label><textarea id="r-notes" rows="3" placeholder="Any special requirements, funder mandates, or context..."></textarea></div>
             </div>
@@ -596,7 +399,7 @@
   </div>
 </footer>
 
-<!-- Mobile slim chat bar — sticky above tabs, mobile only -->
+<!-- Mobile slim chat bar -->
 <button id="rb-mobile-chat-bar" aria-label="Need help? Chat with ResearchPilot">
   <span class="rb-mobile-bar-icon">?</span>
   <span class="rb-mobile-bar-text">
@@ -606,9 +409,9 @@
   <span class="rb-mobile-bar-arrow">›</span>
 </button>
 
-<!-- Chat Widget HTML -->
+<!-- Chat Widget -->
 <div id="rb-chat-tooltip">💬 Ask ResearchPilot anything</div>
-<button id="rb-chat-launcher" aria-label="Open ResearchPilot chat — Need help? Chat with ResearchPilot">
+<button id="rb-chat-launcher" aria-label="Open ResearchPilot chat">
   <span class="rb-launcher-icon">?</span>
   <span class="rb-launcher-label">
     <span class="rb-launcher-label-top">Need help?</span>
@@ -637,9 +440,10 @@
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14.5 8L2 2l2.5 6L2 14l12.5-6z" fill="white"/></svg>
     </button>
   </div>
-  <div class="rb-chat-footer">ResearchPilot</div>
+  <div class="rb-chat-footer">ResearchPilot · University of Wisconsin-Madison</div>
 </div>
 
 <script type="module" src="js/app.js"></script>
+<script type="module" src="js/render_additions.js"></script>
 </body>
 </html>
