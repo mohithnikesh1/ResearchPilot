@@ -374,6 +374,7 @@ function renderSubjectResults(result, container) {
             ${vl.doaj           ? `<a href="${esc(vl.doaj)}"           target="_blank" class="el" style="background:#fef3c7;color:#92400e">DOAJ</a>` : ""}
             ${vl.scopus_sources ? `<a href="${esc(vl.scopus_sources)}" target="_blank" class="el" style="background:#e0e7ff;color:#3730a3">Scopus</a>` : ""}
             ${vl.issn_display   ? `<span class="copy-chip copy-chip-sm" onclick="copyToClipboard('${esc(vl.issn_display)}',this)" title="Copy ISSN">${esc(vl.issn_display)} 📋</span>` : ""}
+            ${j.uw_apc_covered  ? `<a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC covered</a>` : ""}
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button class="el" style="background:#e0e7ff;color:#3730a3;cursor:pointer;border:none"
@@ -400,7 +401,7 @@ function renderSubjectResults(result, container) {
               </div>
               <div class="form-group">
                 <label style="font-size:12px">Your name (optional)</label>
-                <input id="cl-author-${uid}" type="text" placeholder="e.g. Dr. Nikesh">
+                <input id="cl-author-${uid}" type="text" placeholder="e.g. Dr. Smith">
               </div>
               <div class="form-group form-full">
                 <label style="font-size:12px">Abstract <span class="req">*</span></label>
