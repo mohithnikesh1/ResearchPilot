@@ -96,9 +96,9 @@ const PLACEHOLDERS = {
   "j-discipline":  { en: "e.g. Library and Information Science",           ar: "مثال: علم المكتبات والمعلومات" },
   "j-methods":     { en: "e.g. survey, experiment, case study",            ar: "مثال: مسح، تجربة، دراسة حالة" },
   "j-apc":         { en: "e.g. up to USD 2000, or no APC",                ar: "مثال: حتى 2000 دولار، أو بدون رسوم" },
-  "j-funder":      { en: "e.g. ERC, NIH, Wellcome",                       ar: "مثال: المجلس الأوروبي للبحوث، NIH" },
-  "j-institution": { en: "e.g. your university",                        ar: "مثال: جامعتك" },
-  "j-country":     { en: "e.g. UAE",                                       ar: "مثال: الإمارات العربية المتحدة" },
+  "j-funder":      { en: "e.g. NIH, NSF, Wellcome",                       ar: "مثال: NIH، NSF" },
+  "j-institution": { en: "e.g. University of Wisconsin-Madison",           ar: "مثال: جامعة ويسكونسن ماديسون" },
+  "j-country":     { en: "e.g. United States",                             ar: "مثال: الولايات المتحدة" },
   "j-audience":    { en: "e.g. library practitioners, AI researchers",     ar: "مثال: أمناء المكتبات، باحثو الذكاء الاصطناعي" },
   "j-preferred":   { en: "e.g. Nature Communications, PLOS ONE",           ar: "مثال: Nature Communications، PLOS ONE" },
   "j-avoid":       { en: "Journals to exclude from recommendations",       ar: "المجلات المراد استبعادها من التوصيات" },
@@ -106,7 +106,7 @@ const PLACEHOLDERS = {
   "l-journal":     { en: "e.g. Nature Communications",                     ar: "مثال: Nature Communications" },
   "l-issn":        { en: "e.g. 2041-1723",                                 ar: "مثال: 2041-1723" },
   "l-publisher":   { en: "e.g. Springer Nature",                           ar: "مثال: Springer Nature" },
-  "l-funder":      { en: "e.g. cOAlition S, ERC, NIH",                     ar: "مثال: تحالف S، المجلس الأوروبي للبحوث" },
+  "l-funder":      { en: "e.g. cOAlition S, NIH, NSF",                     ar: "مثال: تحالف S، NIH، NSF" },
   "l-notes":       { en: "Already accepted? Embargo concerns?",            ar: "هل تم قبولها؟ مخاوف بشأن الحظر؟" },
   "r-title":       { en: "Descriptive title for your dataset",             ar: "عنوان وصفي لمجموعة بياناتك" },
   "r-desc":        { en: "What does the dataset contain?",                 ar: "ماذا تحتوي مجموعة البيانات؟" },
@@ -114,10 +114,10 @@ const PLACEHOLDERS = {
   "r-datatypes":   { en: "e.g. tabular, images, time series",              ar: "مثال: جداول، صور، سلاسل زمنية" },
   "r-formats":     { en: "e.g. CSV, FASTQ, NetCDF, TIFF",                  ar: "مثال: CSV، FASTQ، NetCDF" },
   "r-size":        { en: "e.g. 250 MB / 5 GB / 2 TB",                      ar: "مثال: 250 ميغابايت / 5 جيجابايت" },
-  "r-funder":      { en: "e.g. Horizon Europe, NIH, ADEK",                 ar: "مثال: أفق أوروبا، NIH، أديك" },
-  "r-institution": { en: "e.g. your university",                        ar: "مثال: جامعتك" },
-  "r-country":     { en: "e.g. UAE",                                       ar: "مثال: الإمارات العربية المتحدة" },
-  "r-preferred":   { en: "e.g. Zenodo, GenBank",                           ar: "مثال: Zenodo، GenBank" },
+  "r-funder":      { en: "e.g. NIH, NSF, Horizon Europe",                  ar: "مثال: NIH، NSF، أفق أوروبا" },
+  "r-institution": { en: "e.g. University of Wisconsin-Madison",           ar: "مثال: جامعة ويسكونسن ماديسون" },
+  "r-country":     { en: "e.g. United States",                             ar: "مثال: الولايات المتحدة" },
+  "r-preferred":   { en: "e.g. Dryad, Zenodo, GenBank",                    ar: "مثال: Dryad، Zenodo، GenBank" },
   "r-publication": { en: "Related article DOI or title",                   ar: "DOI أو عنوان المقالة المرتبطة" },
   "r-notes":       { en: "Any special requirements...",                    ar: "أي متطلبات خاصة..." },
 };
@@ -216,6 +216,292 @@ window.copyToClipboard = function(text, el) {
 
 // ── Chat widget ────────────────────────────────────────────────────────────
 (function initChat() {
+  const MAX_HIST = 20;
+  const API_BASE_CHAT = "https://mohithnikesh-researchpilot.hf.space";
+
+  const WELCOME = "👋 Hi! I'm ResearchPilot — your AI publishing assistant for UW-Madison researchers.\n\nYou can go directly to the tabs above to find journals, check self-archiving rights, or find a data repository — or ask me anything here and I'll guide you.";
+
+  const EXAMPLE_CHIPS = [
+    "Find me a journal",
+    "Can I self-archive my publication?",
+    "Where do I deposit my dataset?",
+  ];
+
+  const TAB_META = {
+    journals: { emoji: "📰", label: "Open Journal Submission tool", color: "#1a2744" },
+    license:  { emoji: "🛡️", label: "Open License Checker",         color: "#059669" },
+    data:     { emoji: "🗄️", label: "Open Data Repository tool",    color: "#d97706" },
+  };
+
+  let isOpen = false, isTyping = false, history = [], welcomeShown = false, chipsShown = false;
+
+  const panel    = document.getElementById("rb-chat-panel");
+  const launcher = document.getElementById("rb-chat-launcher");
+  const closeBtn = document.getElementById("rb-chat-close");
+  const msgs     = document.getElementById("rb-chat-messages");
+  const input    = document.getElementById("rb-chat-input");
+  const sendBtn  = document.getElementById("rb-chat-send");
+  const badge    = document.getElementById("rb-chat-badge");
+  const tooltip  = document.getElementById("rb-chat-tooltip");
+
+  if (!panel || !launcher) return;
+
+  function getLang() {
+    return window._rbChatLang
+      || document.querySelector(".lang-btn.active")?.dataset.lang
+      || "english";
+  }
+
+  function esc(str) {
+    return String(str || "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function scrollBottom() { msgs.scrollTop = msgs.scrollHeight; }
+
+  function addMessage(role, text) {
+    const wrap   = document.createElement("div");
+    wrap.className = `rb-msg ${role}`;
+    const bubble = document.createElement("div");
+    bubble.className = "rb-bubble";
+    bubble.innerHTML = esc(text)
+      .replace(/\n/g, "<br>")
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    wrap.appendChild(bubble);
+    msgs.appendChild(wrap);
+    scrollBottom();
+    return bubble;
+  }
+
+  function addRouteCTA(route, prefill) {
+    const meta = TAB_META[route];
+    if (!meta) return;
+    const wrap = document.createElement("div");
+    wrap.className = "rb-msg assistant";
+    const btn = document.createElement("button");
+    btn.className = "rb-route-btn";
+    btn.style.background = meta.color;
+    btn.innerHTML = `${meta.emoji} ${meta.label} →`;
+    btn.addEventListener("click", () => {
+      closePanel();
+      activateTabAndPrefill(route, prefill || {});
+    });
+    wrap.appendChild(btn);
+    msgs.appendChild(wrap);
+    scrollBottom();
+  }
+
+  function activateTabAndPrefill(route, prefill) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => {
+      p.classList.remove("active"); p.style.display = "none";
+    });
+    const tabBtn = document.querySelector(`.tab-btn[data-tab="${route}"]`);
+    if (tabBtn) tabBtn.classList.add("active");
+    const tabPanel = document.getElementById(`tab-${route}`);
+    if (tabPanel) { tabPanel.classList.add("active"); tabPanel.style.display = "block"; }
+
+    const FIELD_MAP = {
+      journals: { title: "j-title", abstract: "j-abstract", keywords: "j-keywords", discipline: "j-discipline", subject: "s-subject" },
+      license:  { journal_name: "l-journal", issn: "l-issn", publisher: "l-publisher" },
+      data:     { title: "r-title", discipline: "r-discipline", data_types: "r-datatypes" },
+    };
+    const map = FIELD_MAP[route] || {};
+    Object.entries(prefill || {}).forEach(([key, value]) => {
+      const elId = map[key];
+      if (!elId || !value) return;
+      const el = document.getElementById(elId);
+      if (el) el.value = value;
+    });
+
+    if (route === "journals") {
+      switchMode(prefill && prefill.subject ? "subject" : "manuscript");
+    }
+
+    document.querySelector(".tabs-bar")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showExampleChips() {
+    if (chipsShown) return;
+    chipsShown = true;
+    document.getElementById("rb-chips-wrap")?.remove();
+
+    const wrap = document.createElement("div");
+    wrap.id = "rb-chips-wrap";
+    wrap.className = "rb-chips-wrap";
+
+    EXAMPLE_CHIPS.forEach(text => {
+      const chip = document.createElement("button");
+      chip.className = "rb-chip";
+      chip.textContent = text;
+      chip.addEventListener("click", () => {
+        wrap.remove();
+        sendMessage(text);
+      });
+      wrap.appendChild(chip);
+    });
+
+    const inputArea = panel.querySelector(".rb-chat-input-wrap");
+    if (inputArea) panel.insertBefore(wrap, inputArea);
+  }
+
+  function removeChips() {
+    document.getElementById("rb-chips-wrap")?.remove();
+  }
+
+  function openPanel() {
+    isOpen = true;
+    panel.classList.add("open");
+    badge.classList.remove("visible");
+    tooltip.classList.remove("show");
+    input.focus();
+    if (!welcomeShown) {
+      welcomeShown = true;
+      addMessage("assistant", WELCOME);
+      showExampleChips();
+    }
+  }
+
+  function closePanel() {
+    isOpen = false;
+    panel.classList.remove("open");
+  }
+
+  const mobileBar = document.getElementById("rb-mobile-chat-bar");
+  launcher.addEventListener("click", () => isOpen ? closePanel() : openPanel());
+  mobileBar?.addEventListener("click", () => isOpen ? closePanel() : openPanel());
+  closeBtn.addEventListener("click", closePanel);
+  document.addEventListener("click", (e) => {
+    const clickedMobileBar = mobileBar && mobileBar.contains(e.target);
+    if (isOpen && !panel.contains(e.target) && !launcher.contains(e.target) && !clickedMobileBar) {
+      closePanel();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 100) + "px";
+    sendBtn.disabled = !input.value.trim() || isTyping;
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendMessage(input.value.trim());
+    }
+  });
+
+  sendBtn.addEventListener("click", () => sendMessage(input.value.trim()));
+
+  async function sendMessage(text) {
+    if (!text || isTyping) return;
+
+    removeChips();
+
+    input.value = "";
+    input.style.height = "auto";
+    sendBtn.disabled = true;
+    isTyping = true;
+
+    addMessage("user", text);
+    history.push({ role: "user", content: text });
+    if (history.length > MAX_HIST) history = history.slice(-MAX_HIST);
+
+    const wrap   = document.createElement("div");
+    wrap.className = "rb-msg assistant";
+    const bubble = document.createElement("div");
+    bubble.className = "rb-bubble";
+    bubble.innerHTML = '<span class="rb-cursor">▌</span>';
+    wrap.appendChild(bubble);
+    msgs.appendChild(wrap);
+    scrollBottom();
+
+    let fullText = "";
+
+    try {
+      const res = await fetch(`${API_BASE_CHAT}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history, language: getLang() }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = "";
+      let   route   = null;
+      let   prefill = {};
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (value) buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const evt = JSON.parse(line.slice(6));
+            if (evt.done) {
+              route   = evt.route   || null;
+              prefill = evt.prefill || {};
+              if (evt.reply && evt.reply.trim()) fullText = evt.reply;
+            } else if (evt.token) {
+              fullText += evt.token;
+            }
+            bubble.innerHTML = esc(fullText).replace(/\n/g, "<br>")
+              .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+              + (evt.done ? "" : '<span class="rb-cursor">▌</span>');
+            scrollBottom();
+          } catch (_) {}
+        }
+
+        if (done) {
+          if (buffer.trim().startsWith("data: ")) {
+            try {
+              const evt = JSON.parse(buffer.trim().slice(6));
+              if (evt.done) {
+                route   = evt.route   || null;
+                prefill = evt.prefill || {};
+                if (evt.reply && evt.reply.trim()) fullText = evt.reply;
+                bubble.innerHTML = esc(fullText).replace(/\n/g, "<br>")
+                  .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+                scrollBottom();
+              }
+            } catch (_) {}
+          }
+          break;
+        }
+      }
+
+      const cleanReply = fullText.trim();
+      if (cleanReply) history.push({ role: "assistant", content: cleanReply });
+      if (history.length > MAX_HIST) history = history.slice(-MAX_HIST);
+
+      if (route && TAB_META[route]) {
+        addRouteCTA(route, prefill);
+      }
+
+    } catch (err) {
+      bubble.innerHTML = "⚠️ Something went wrong. Please try again in a moment.";
+      console.error("[ResearchPilot chat]", err);
+    }
+
+    isTyping = false;
+    sendBtn.disabled = !input.value.trim();
+  }
+
+  // Tooltip on first load
+  setTimeout(() => {
+    tooltip.classList.add("show");
+    badge.classList.add("visible");
+    setTimeout(() => tooltip.classList.remove("show"), 4000);
+  }, 2500);
+
+})();
+
 // ── Init ───────────────────────────────────────────────────────────────────
 journalTab();
 subjectTab();
