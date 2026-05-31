@@ -102,8 +102,8 @@ function renderJournalCard(j, idx) {
   // UW-Madison APC note — only shown if backend flagged this publisher as covered
   const uwNote = j.uw_apc_covered ? `
     <div class="uw-apc-note">
-      🎓 <strong>UW-Madison researchers:</strong> this publisher has an APC agreement — you may be able to publish OA for free.
-      <a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" rel="noopener">Check with the library ↗</a>
+      🎓 <strong>UW-Madison researchers:</strong> UW APC may apply — verify eligibility with the library.
+      <a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" rel="noopener">Check APC agreements ↗</a>
     </div>` : "";
 
   return `
@@ -160,25 +160,43 @@ function renderExtendedList(list) {
   if (!list?.length) return "";
   const uwLink = `https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support`;
 
-  const rows = list.map((j, i) => {
+  const makeRows = (items, startIdx) => items.map((j, i) => {
     const vl = j.verify_links || {};
     const q  = j.quartile;
     return `
       <tr>
-        <td>${i + 6}</td>
+        <td>${startIdx + i + 1}</td>
         <td><strong>${esc(j.name)}</strong><br><span style="font-size:12px;color:var(--text-muted)">${esc(j.publisher || "")}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${esc(j.issn || "-")}</td>
         <td>${q ? quartileBadge(q) : '<span style="color:var(--text-light);font-size:12px">-</span>'}</td>
         <td style="font-size:12px;color:var(--text-muted)">${esc(j.fit_reason || "")}</td>
         <td>
           <div class="ext-links">
-            ${vl.scopus      ? `<a href="${esc(vl.scopus)}"        target="_blank" class="el el-scopus">Scopus</a>` : ""}
-            ${vl.sherpa_romeo? `<a href="${esc(vl.sherpa_romeo)}"  target="_blank" class="el el-sherpa">Open Policy Finder</a>` : ""}
-            ${j.uw_apc_covered ? `<a href="${uwLink}" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC covered</a>` : ""}
+            ${vl.scopus      ? `<a href="${esc(vl.scopus)}"       target="_blank" class="el el-scopus">Scopus</a>` : ""}
+            ${vl.sherpa_romeo? `<a href="${esc(vl.sherpa_romeo)}" target="_blank" class="el el-sherpa">Open Policy Finder</a>` : ""}
+            ${j.uw_apc_covered ? `<a href="${uwLink}" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC may apply</a>` : ""}
           </div>
         </td>
       </tr>`;
   }).join("");
+
+  // Split into first 15 and next 15
+  const first15 = list.slice(0, 15);
+  const next15  = list.slice(15);
+
+  const nextSection = next15.length ? `
+    <div class="ext-next-wrap">
+      <button class="ext-toggle" style="margin-top:8px" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+        <span>📋 Show next ${next15.length} journals</span>
+        <span class="ext-arrow">▼</span>
+      </button>
+      <div class="ext-body">
+        <table class="ext-table">
+          <thead><tr><th>#</th><th>Journal</th><th>ISSN</th><th>Quartile</th><th>Why it fits</th><th>Verify</th></tr></thead>
+          <tbody>${makeRows(next15, first15.length + 10)}</tbody>
+        </table>
+      </div>
+    </div>` : "";
 
   return `
     <div class="extended-wrap">
@@ -188,11 +206,10 @@ function renderExtendedList(list) {
       </button>
       <div class="ext-body">
         <table class="ext-table">
-          <thead>
-            <tr><th>#</th><th>Journal</th><th>ISSN</th><th>Quartile</th><th>Why it fits</th><th>Verify</th></tr>
-          </thead>
-          <tbody>${rows}</tbody>
+          <thead><tr><th>#</th><th>Journal</th><th>ISSN</th><th>Quartile</th><th>Why it fits</th><th>Verify</th></tr></thead>
+          <tbody>${makeRows(first15, 10)}</tbody>
         </table>
+        ${nextSection}
       </div>
     </div>`;
 }
@@ -236,7 +253,7 @@ function renderJournalResults(result, container) {
 
     ${renderManuscriptUnderstanding(result.manuscript_understanding)}
 
-    <h3 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:16px">🏆 Best-fit journal shortlist</h3>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:16px">🏆 Top 10 best-fit journals</h3>
     ${journals.map((j, i) => renderJournalCard(j, i)).join("")}
     ${renderExtendedList(extended)}
 
@@ -374,7 +391,7 @@ function renderSubjectResults(result, container) {
             ${vl.doaj           ? `<a href="${esc(vl.doaj)}"           target="_blank" class="el" style="background:#fef3c7;color:#92400e">DOAJ</a>` : ""}
             ${vl.scopus_sources ? `<a href="${esc(vl.scopus_sources)}" target="_blank" class="el" style="background:#e0e7ff;color:#3730a3">Scopus</a>` : ""}
             ${vl.issn_display   ? `<span class="copy-chip copy-chip-sm" onclick="copyToClipboard('${esc(vl.issn_display)}',this)" title="Copy ISSN">${esc(vl.issn_display)} 📋</span>` : ""}
-            ${j.uw_apc_covered  ? `<a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC covered</a>` : ""}
+            ${j.uw_apc_covered  ? `<a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC may apply</a>` : ""}
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button class="el" style="background:#e0e7ff;color:#3730a3;cursor:pointer;border:none"
