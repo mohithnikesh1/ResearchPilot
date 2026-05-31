@@ -157,6 +157,11 @@ export function renderRepoCard(r, idx) {
           <div><dt>Sensitive data</dt><dd>${esc(r.sensitive_data_suitable)}</dd></div>
         </dl>
         ${r.funder_compliance_note ? `<div class="policy-notes"><p><strong>Funder compliance:</strong> ${esc(r.funder_compliance_note)}</p></div>` : ""}
+        ${r.uw_note ? `
+          <div class="uw-apc-note">
+            🎓 <strong>UW-Madison:</strong> ${esc(r.uw_note)}
+            <a href="https://researchdata.wisc.edu/data-repositories/" target="_blank" rel="noopener">UW Research Data Services ↗</a>
+          </div>` : ""}
         ${r.risk_flag ? `<p style="color:var(--danger);font-size:13px;display:flex;gap:6px;align-items:flex-start"><span>[!]</span><span>${esc(r.risk_flag)}</span></p>` : ""}
         <p style="font-size:12px"><strong>Verification:</strong> ${esc(r.verification_status)}</p>
         <div class="verify-row">
