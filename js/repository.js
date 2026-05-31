@@ -2,7 +2,7 @@
 import { callAPI, getModel, getLanguage } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
-  esc, renderRepoCard,
+  esc, renderRepoCard, renderNextActions, renderMascotRow
 } from "./render.js";
 
 export function repositoryTab() {
