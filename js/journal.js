@@ -99,12 +99,10 @@ function renderJournalCard(j, idx) {
   // Unique ID for async loaders
   const uid = (j.issn || j.name || "").replace(/[^a-zA-Z0-9]/g, "").slice(0, 16);
 
-  // UW-Madison APC note — only shown if institution field contains Wisconsin
-  const institution = (document.getElementById("j-institution")?.value || "").toLowerCase();
-  const isUW = institution.includes("wisconsin") || institution.includes("uw-madison") || institution.includes("uw madison");
-  const uwNote = isUW ? `
+  // UW-Madison APC note — only shown if backend flagged this publisher as covered
+  const uwNote = j.uw_apc_covered ? `
     <div class="uw-apc-note">
-      🎓 <strong>UW-Madison researchers:</strong> this publisher may have an APC agreement — you may be able to publish OA for free.
+      🎓 <strong>UW-Madison researchers:</strong> this publisher has an APC agreement — you may be able to publish OA for free.
       <a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" rel="noopener">Check with the library ↗</a>
     </div>` : "";
 
@@ -160,8 +158,6 @@ function renderJournalCard(j, idx) {
 
 function renderExtendedList(list) {
   if (!list?.length) return "";
-  const institution = (document.getElementById("j-institution")?.value || "").toLowerCase();
-  const isUW = institution.includes("wisconsin") || institution.includes("uw-madison") || institution.includes("uw madison");
   const uwLink = `https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support`;
 
   const rows = list.map((j, i) => {
@@ -178,7 +174,7 @@ function renderExtendedList(list) {
           <div class="ext-links">
             ${vl.scopus      ? `<a href="${esc(vl.scopus)}"        target="_blank" class="el el-scopus">Scopus</a>` : ""}
             ${vl.sherpa_romeo? `<a href="${esc(vl.sherpa_romeo)}"  target="_blank" class="el el-sherpa">Open Policy Finder</a>` : ""}
-            ${isUW ? `<a href="${uwLink}" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC?</a>` : ""}
+            ${j.uw_apc_covered ? `<a href="${uwLink}" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC covered</a>` : ""}
           </div>
         </td>
       </tr>`;
