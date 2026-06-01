@@ -51,18 +51,18 @@ export function allowedClass(a) {
 
 export function renderVersionBlock(title, v) {
   if (!v) return "";
+  const cls = allowedClass(v.allowed);
+  const details = [
+    v.where    ? `<span><strong>Where:</strong> ${esc(v.where)}</span>` : "",
+    v.embargo  ? `<span><strong>Embargo:</strong> ${esc(v.embargo)}</span>` : "",
+    v.licence  ? `<span><strong>Licence:</strong> ${esc(v.licence)}</span>` : "",
+    v.conditions ? `<span><strong>Conditions:</strong> ${esc(v.conditions)}</span>` : "",
+  ].filter(Boolean).join(" · ");
   return `
-    <div class="version-card">
-      <div class="v-head">
-        <span class="v-title">${esc(title)}</span>
-        <span class="v-allowed ${allowedClass(v.allowed)}">${esc(v.allowed || "Unclear")}</span>
-      </div>
-      <dl class="v-grid">
-        ${v.where    ? `<div><dt>Where</dt><dd>${esc(v.where)}</dd></div>` : ""}
-        ${v.embargo  ? `<div><dt>Embargo</dt><dd>${esc(v.embargo)}</dd></div>` : ""}
-        ${v.licence  ? `<div><dt>Licence</dt><dd>${esc(v.licence)}</dd></div>` : ""}
-        ${v.conditions ? `<div class="v-full"><dt>Conditions</dt><dd>${esc(v.conditions)}</dd></div>` : ""}
-      </dl>
+    <div class="version-row">
+      <span class="v-title-sm">${esc(title)}</span>
+      <span class="v-allowed ${cls}" style="margin:0 8px">${esc(v.allowed || "Unclear")}</span>
+      ${details ? `<span class="v-details">${details}</span>` : ""}
     </div>`;
 }
 
