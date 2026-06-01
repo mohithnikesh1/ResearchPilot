@@ -336,6 +336,7 @@ textarea { resize: vertical; min-height: 90px; }
 .ext-toggle.open .ext-arrow { transform: rotate(180deg); }
 .ext-body { display: none; margin-top: 6px; }
 .ext-body.show { display: block; }
+.ext-next-wrap { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; }
 .ext-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; font-size: 13px; }
 .ext-table th {
   background: var(--bg-subtle); padding: 10px 14px; text-align: left;
