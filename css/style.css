@@ -336,7 +336,6 @@ textarea { resize: vertical; min-height: 90px; }
 .ext-toggle.open .ext-arrow { transform: rotate(180deg); }
 .ext-body { display: none; margin-top: 6px; }
 .ext-body.show { display: block; }
-.ext-next-wrap { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; }
 .ext-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; font-size: 13px; }
 .ext-table th {
   background: var(--bg-subtle); padding: 10px 14px; text-align: left;
@@ -843,3 +842,34 @@ textarea { resize: vertical; min-height: 90px; }
   background: var(--primary-xlight);
   border-color: var(--primary);
 }
+
+/* ── Compact journal cards ───────────────────────────────────────────── */
+.version-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.version-row:last-child { border-bottom: none; }
+.v-title-sm {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 180px;
+  flex-shrink: 0;
+}
+.v-details {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex: 1;
+}
+.version-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 8px; }
+.j-card .j-body { padding: 12px 16px; }
+.j-card .detail-grid { gap: 8px; margin-bottom: 10px; }
+.j-card .detail-item h5 { font-size: 11px; margin-bottom: 2px; }
+.j-card .detail-item p  { font-size: 12px; }
+.j-card hr.divider { margin: 8px 0; }
