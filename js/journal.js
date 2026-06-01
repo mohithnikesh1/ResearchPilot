@@ -186,11 +186,11 @@ function renderExtendedList(list) {
 
   const nextSection = next15.length ? `
     <div class="ext-next-wrap">
-      <button class="ext-toggle" style="margin-top:8px" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
-        <span>📋 Show next ${next15.length} journals</span>
+      <button class="ext-toggle" style="margin-top:8px" onclick="this.classList.toggle('open');var b=this.nextElementSibling;b.style.display=b.style.display==='none'||b.style.display===''?'block':'none';">
+        <span>📋 Show next ${next15.length} journals (#${first15.length + 11}–${list.length + 10})</span>
         <span class="ext-arrow">▼</span>
       </button>
-      <div class="ext-body">
+      <div style="display:none;margin-top:6px">
         <table class="ext-table">
           <thead><tr><th>#</th><th>Journal</th><th>ISSN</th><th>Quartile</th><th>Why it fits</th><th>Verify</th></tr></thead>
           <tbody>${makeRows(next15, first15.length + 10)}</tbody>
