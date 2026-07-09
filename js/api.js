@@ -16,5 +16,5 @@ export async function callAPI(endpoint, payload) {
 }
 
 export function getLanguage() {
-  return document.querySelector(".lang-btn.active")?.dataset.lang || "english";
+  return "english";
 }
