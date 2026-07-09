@@ -1,5 +1,5 @@
 // repository.js - Data repository tab
-import { callAPI, getModel, getLanguage } from "./api.js";
+import { callAPI, getLanguage } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
   esc, renderRepoCard, renderNextActions, renderMascotRow
@@ -27,7 +27,7 @@ export function repositoryTab() {
     try {
       const dataset = getDatasetData();
       setStep("repo-progress", 1);
-      const data = await callAPI("/api/find-repository", { dataset, model: getModel(), language: getLanguage() });
+      const data = await callAPI("/api/find-repository", { dataset, language: getLanguage() });
       setStep("repo-progress", 2);
       doneProgress("repo-progress", `[OK] Repository search complete`);
       setTimeout(() => renderRepoResults(data.result, results), 400);

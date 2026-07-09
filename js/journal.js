@@ -1,5 +1,5 @@
 // journal.js - Journal submission tab
-import { callAPI, getModel, getLanguage } from "./api.js";
+import { callAPI, getLanguage } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
   esc, quartileBadge, confidenceBadge, oaStatusBadge,
@@ -37,7 +37,7 @@ export function journalTab() {
       const manuscript = getManuscriptData();
       window._lastManuscript = manuscript;
       setStep("journal-progress", 1);
-      const data = await callAPI("/api/analyze-journal", { manuscript, model: getModel(), language: getLanguage() });
+      const data = await callAPI("/api/analyze-journal", { manuscript, language: getLanguage() });
       setStep("journal-progress", 2);
       await new Promise(r => setTimeout(r, 300));
       setStep("journal-progress", 3);
@@ -326,7 +326,7 @@ export function subjectTab() {
     try {
       setStep("subject-progress", 1);
       const data = await callAPI("/api/browse-subject", {
-        subject, model: getModel(), language: getLanguage()
+        subject, language: getLanguage()
       });
       setStep("subject-progress", 2);
       doneProgress("subject-progress",
@@ -532,7 +532,7 @@ window.generateCoverLetter = async function(jName, jPub, mTitle, mAbs, mType, mD
     const data = await callAPI("/api/cover-letter", {
       manuscript_title: mTitle, abstract: mAbs, journal_name: jName,
       publisher: jPub, article_type: mType, discipline: mDisc,
-      language: getLanguage(), model: getModel()
+      language: getLanguage()
     });
     const r = data.result;
     container.innerHTML = `
@@ -595,7 +595,7 @@ window.submitSubjectCoverLetter = async function(uid, jName, jPub, btn) {
     const data = await callAPI("/api/cover-letter", {
       manuscript_title: title, abstract, journal_name: jName,
       publisher: jPub, author_name: author,
-      language: getLanguage(), model: getModel()
+      language: getLanguage()
     });
     const r = data.result;
     const full = `Subject: ${r.subject_line || ""}\n\n${r.cover_letter || ""}`;

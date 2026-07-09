@@ -1,12 +1,10 @@
 // license.js - License checking tab
-import { callAPI, getModel, getLanguage } from "./api.js";
+import { callAPI, getLanguage, HF_BASE } from "./api.js";
 import { showProgress, setStep, doneProgress } from "./app.js";
 import {
   esc, oaStatusBadge, renderVersionBlock, renderVerifyLinks,
   renderNextActions, renderMascotRow
 } from "./render.js";
-
-const HF_BASE = "https://mohithnikesh-researchpilot.hf.space";
 
 // ── Journal name auto-lookup — multi-suggestion ──────────────────────────
 let _lookupTimer = null;
@@ -209,7 +207,7 @@ export function licenseTab() {
       const license_input = getLicenseData();
       setStep("license-progress", 1);
       const data = await callAPI("/api/check-license", {
-        license_input, model: getModel(), language: getLanguage()
+        license_input, language: getLanguage()
       });
       setStep("license-progress", 2);
       doneProgress("license-progress", "[OK] Policy check complete");
@@ -306,8 +304,19 @@ function renderDepositRecommendation(r) {
 
 function renderLicenseResults(result, container) {
   const journals = result.journals || [];
+  const opfBanner = result.opf_verified
+    ? `<div style="background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px">
+         ✅ <strong>Verified via Open Policy Finder</strong> — this policy is based on live data from
+         <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">openpolicyfinder.jisc.ac.uk</a> (Jisc).
+       </div>`
+    : `<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px">
+         ⚠️ <strong>AI-generated — not verified.</strong> No live Open Policy Finder record was found for this journal.
+         Verify the policy at <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">Open Policy Finder</a>
+         before depositing.
+       </div>`;
   container.innerHTML = `
     ${renderMascotRow('Here is the self-archiving policy for your journal.')}
+    ${opfBanner}
     <div class="results-header">
       <h2 class="results-title">Policy result</h2>
       <div class="results-meta">

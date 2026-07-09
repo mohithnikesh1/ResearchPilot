@@ -1,6 +1,6 @@
 // api.js - fetch wrapper for ResearchPilot backend
 // Set HF_BASE to your HuggingFace Space URL before deploying
-const HF_BASE = "https://mohithnikesh-researchpilot.hf.space";
+export const HF_BASE = "https://mohithnikesh-researchpilot.hf.space";
 
 export async function callAPI(endpoint, payload) {
   const res = await fetch(`${HF_BASE}${endpoint}`, {
@@ -13,10 +13,6 @@ export async function callAPI(endpoint, payload) {
     throw new Error(err.error || err.message || `HTTP ${res.status}`);
   }
   return res.json();
-}
-
-export function getModel() {
-  return document.querySelector(".model-btn.active")?.dataset.model || "gpt-4o-mini";
 }
 
 export function getLanguage() {
