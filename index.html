@@ -45,56 +45,34 @@
     data-repository guidance — in one place.
   </p>
   <p class="hero-note">An independent tool built to help University of Wisconsin-Madison researchers · not an official UW-Madison Libraries service</p>
-  <div class="hero-cards">
-    <button class="hero-card" onclick="activateTab('journals');document.getElementById('tab-journals').scrollIntoView({behavior:'smooth'})">
-      <span class="hero-card-icon" aria-hidden="true">📰</span>
-      <span>
-        <span class="hero-card-title">Find a journal</span>
-        <span class="hero-card-desc">Browse by subject or analyse your manuscript for ranked, OA-aware matches</span>
-      </span>
-    </button>
-    <button class="hero-card" onclick="activateTab('license');document.getElementById('tab-license').scrollIntoView({behavior:'smooth'})">
-      <span class="hero-card-icon" aria-hidden="true">🛡️</span>
-      <span>
-        <span class="hero-card-title">Check self-archiving rights</span>
-        <span class="hero-card-desc">Enter a DOI for a verified, article-level Green OA answer — grounded, not guessed</span>
-      </span>
-    </button>
-    <button class="hero-card" onclick="activateTab('data');document.getElementById('tab-data').scrollIntoView({behavior:'smooth'})">
-      <span class="hero-card-icon" aria-hidden="true">🗄️</span>
-      <span>
-        <span class="hero-card-title">Deposit your data</span>
-        <span class="hero-card-desc">Curated repository matches — MINDS@UW and Dryad are free for UW-Madison</span>
-      </span>
-    </button>
-  </div>
 </section>
 
-<div class="tabs-bar">
-  <div class="tabs-inner" role="tablist" aria-label="ResearchPilot tools">
-    <button class="tab-btn active" data-tab="journals" role="tab" aria-selected="true">
-      <span class="tab-icon-wrap" aria-hidden="true">📰</span>
-      <span class="tab-label-wrap">
-        <span class="tab-label-main">Journal submission</span>
-        <span class="tab-label-sub">Find &amp; rank journals</span>
+<div id="nav-sentinel" aria-hidden="true"></div>
+<nav class="tool-nav" id="tool-nav" aria-label="Choose a tool">
+  <div class="tool-nav-inner" role="tablist">
+    <button class="nav-card active" data-tab="journals" role="tab" aria-selected="true" aria-controls="tab-journals">
+      <span class="nav-card-icon" aria-hidden="true">&#128240;</span>
+      <span class="nav-card-text">
+        <span class="nav-card-title">Find a journal</span>
+        <span class="nav-card-desc">Browse by subject or analyse your manuscript</span>
       </span>
     </button>
-    <button class="tab-btn" data-tab="license" role="tab" aria-selected="false">
-      <span class="tab-icon-wrap" aria-hidden="true">🛡️</span>
-      <span class="tab-label-wrap">
-        <span class="tab-label-main">License checking</span>
-        <span class="tab-label-sub">Self-archiving rights</span>
+    <button class="nav-card" data-tab="license" role="tab" aria-selected="false" aria-controls="tab-license">
+      <span class="nav-card-icon" aria-hidden="true">&#128737;&#65039;</span>
+      <span class="nav-card-text">
+        <span class="nav-card-title">Check self-archiving rights</span>
+        <span class="nav-card-desc">Enter a DOI for a verified, article-level answer</span>
       </span>
     </button>
-    <button class="tab-btn" data-tab="data" role="tab" aria-selected="false">
-      <span class="tab-icon-wrap" aria-hidden="true">🗄️</span>
-      <span class="tab-label-wrap">
-        <span class="tab-label-main">Data repository</span>
-        <span class="tab-label-sub">Find the right repo</span>
+    <button class="nav-card" data-tab="data" role="tab" aria-selected="false" aria-controls="tab-data">
+      <span class="nav-card-icon" aria-hidden="true">&#128451;</span>
+      <span class="nav-card-text">
+        <span class="nav-card-title">Deposit your data</span>
+        <span class="nav-card-desc">Curated repository matches, MINDS@UW first</span>
       </span>
     </button>
   </div>
-</div>
+</nav>
 
 <main class="main-content" id="main">
   <!-- ═══ Tab 1 — Journals ═══ -->
