@@ -1,20 +1,51 @@
 # 🧭 ResearchPilot — Frontend
 
-Static frontend (GitHub Pages) for **ResearchPilot**, an AI publishing & open access assistant for researchers, with UW-Madison-specific guidance.
+**An independent AI publishing & open access assistant built to help UW-Madison researchers.**
 
-- **Live app:** https://mohithnikesh1.github.io/ResearchPilot/
-- **Backend:** FastAPI on HuggingFace Spaces — set `HF_BASE` in `js/api.js` to your Space URL.
+> Find the right journal. Check your rights. Deposit to the right repository.
 
-## Tabs
-1. **Journal Submission** — browse 32,000+ journals by subject or analyse a manuscript (10 detailed matches + 20 quick matches), with SCImago-verified quartiles and a UW-Madison APC agreement badge.
-2. **License Checking** — self-archiving policy by version (Preprint / AAM / VoR). Results are grounded in **live Open Policy Finder (Jisc) data** and clearly labelled *Verified* or *AI-generated — not verified*.
-3. **Data Repository** — repository recommendations with FAIR alignment; Dryad and MINDS@UW surfaced first for UW-Madison researchers.
+Live app: **https://mohithnikesh1.github.io/ResearchPilot/**
+Backend API: **https://mohithnikesh-researchpilot.hf.space** (FastAPI on HuggingFace Spaces — see the companion backend repo)
 
-## Privacy & AI notice
-Text submitted (titles, abstracts, dataset descriptions) is sent to the OpenAI API via the backend to generate results and is not used to train OpenAI models. Do not submit confidential or sensitive information. AI output can contain errors — always use the built-in verify links (SCImago, Open Policy Finder, DOAJ, OpenAlex, re3data, FAIRsharing).
+---
 
-## Attribution
-Journal ranking data: SCImago Journal Rank 2025 (© SCImago Lab, based on Scopus® data by Elsevier). Policy data: Open Policy Finder (Jisc). Enrichment: OpenAlex.
+## What it does
 
-## License
-MIT — see [LICENSE](LICENSE).
+| Tab | What you get |
+|---|---|
+| 📰 **Journal submission** | Browse 32K+ SCImago-ranked journals by subject, or paste an abstract for AI-matched recommendations with a full Green OA breakdown, verified quartiles, Altmetric attention, related works, and a UW-Madison APC-agreement badge (13 publishers, always with a verify-eligibility caveat). |
+| 🛡️ **License checking** | **DOI-first and grounded**: with a DOI, self-archiving facts come from the OA.Works Permissions database (the dataset behind cOAlition S's Journal Checker Tool) — never from the AI. Without a DOI, you get a journal-level estimate clearly marked "Not confirmed". Deposit routes: MINDS@UW, ShareYourPaper (deposits an open copy to Zenodo), or direct Zenodo deposit. |
+| 🗄️ **Data repository** | Curated-registry repository matching. MINDS@UW and Dryad (both free for UW-Madison researchers) always listed first; every factual field served from verified records, not generated. |
+| 💬 **ResearchPilot Assistant** | Streaming chat grounded in a UW-Madison knowledge base (APC agreements, OA policy, data services) with smart routing to the three tools. |
+
+## Design
+
+- **UW-Madison palette**: Badger Red `#c5050c`, dark red `#9b0000`, warm-gray surfaces — with the official UW brand typefaces **Red Hat Display / Red Hat Text** (Google Fonts).
+- Original animated SVG wordmark (no trademarked UW marks are used).
+- Static site — no build step. HTML + CSS + ES modules only.
+
+```
+index.html          page shell (hero, tabs, forms, chat widget, footer)
+css/style.css       full design system
+assets/logo.svg     animated wordmark   assets/favicon.svg
+js/api.js           fetch wrapper (HF_BASE points at the backend Space)
+js/app.js           tab router, progress helpers, chat widget (SSE)
+js/journal.js       journal tab (subject browse + manuscript analysis)
+js/license.js       license tab (DOI-first rendering, verified banners)
+js/repository.js    data tab
+js/render.js        shared card/badge renderers
+js/render_additions.js  Altmetric + related-works widgets
+```
+
+## Deploy
+
+1. Push this repo to GitHub and enable **GitHub Pages** (deploy from `main`, root).
+2. If your backend Space URL differs, change `HF_BASE` in `js/api.js`.
+
+## Independence & attribution
+
+ResearchPilot is an **independent tool** — not an official service of UW-Madison or UW-Madison Libraries. Ranking metrics from SCImago Journal Rank 2025 (© SCImago Lab, based on Scopus® data). DOI-level permissions from the OA.Works Permissions API. Always verify policies on [Open Policy Finder](https://openpolicyfinder.jisc.ac.uk) and repositories on [re3data](https://www.re3data.org) before deposit. UW-Madison APC-agreement details last verified May 2026.
+
+**Privacy:** text you submit is sent to the OpenAI API to generate results and is not used to train OpenAI models (per OpenAI API policy). Do not submit confidential or sensitive information.
+
+MIT licence.

@@ -3,216 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResearchPilot — AI Publishing Assistant</title>
-  <meta name="description" content="Find the right journal. Check your rights. Deposit to the right repository. AI-powered publishing and repository assistant for UW-Madison researchers.">
+  <title>ResearchPilot — AI Publishing Assistant for UW-Madison Researchers</title>
+  <meta name="description" content="Find the right journal. Check your self-archiving rights with verified, DOI-level data. Deposit to the right repository. An independent AI publishing assistant built to help UW-Madison researchers.">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="assets/researchbeemascot.png">
-  <style>
-    /* ── Chat Widget ── */
-    #rb-chat-launcher {
-      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
-      background: linear-gradient(135deg, #1a2744 0%, #4338CA 100%);
-      border: none; cursor: pointer;
-      border-radius: 28px;
-      padding: 10px 18px 10px 14px;
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 20px rgba(67,56,202,.45), 0 1px 4px rgba(0,0,0,.2);
-      transition: transform .2s, box-shadow .2s; outline: none;
-      min-width: 0;
-    }
-    #rb-chat-launcher:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(67,56,202,.55); }
-    #rb-chat-launcher:active { transform: translateY(0); }
-    .rb-launcher-icon {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3);
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      font-family: 'DM Serif Display', Georgia, serif;
-      font-size: 22px; font-weight: 700; color: #fff; line-height: 1; transition: background .2s;
-    }
-    #rb-chat-launcher:hover .rb-launcher-icon { background: rgba(255,255,255,.25); }
-    .rb-launcher-label { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
-    .rb-launcher-label-top { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.7); line-height: 1.2; letter-spacing: .01em; text-transform: uppercase; }
-    .rb-launcher-label-main { font-family: 'DM Serif Display', Georgia, serif; font-size: 14px; font-weight: 400; color: #fff; line-height: 1.2; white-space: nowrap; }
-    #rb-chat-badge { position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; background: #F59E0B; border-radius: 50%; border: 2px solid #fff; display: none; }
-    #rb-chat-badge.visible { display: block; }
-    #rb-chat-tooltip { position: fixed; bottom: 108px; right: 28px; z-index: 999; background: #1a2744; color: #fff; font-family: 'DM Sans',sans-serif; font-size: 13px; padding: 8px 14px; border-radius: 10px; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,.18); pointer-events: none; opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
-    #rb-chat-tooltip::after { content: ''; position: absolute; bottom: -6px; right: 22px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #1a2744; }
-    #rb-chat-tooltip.show { opacity: 1; transform: translateY(0); }
-    #rb-chat-panel { position: fixed; bottom: 98px; right: 28px; z-index: 999; width: 370px; max-height: 560px; background: #fff; border-radius: 18px; box-shadow: 0 12px 48px rgba(26,39,68,.18), 0 2px 8px rgba(0,0,0,.08); display: flex; flex-direction: column; overflow: hidden; transform: scale(0.92) translateY(12px); transform-origin: bottom right; opacity: 0; pointer-events: none; transition: opacity .22s, transform .22s; }
-    #rb-chat-panel.open { opacity: 1; transform: scale(1) translateY(0); pointer-events: all; }
-    .rb-chat-header { background: linear-gradient(135deg, #1a2744 0%, #2d3f6b 100%); padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .rb-chat-header img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); object-fit: cover; flex-shrink: 0; }
-    .rb-chat-header-text { flex: 1; min-width: 0; }
-    .rb-chat-header-name { font-family: 'DM Serif Display',serif; font-size: 15px; color: #fff; display: block; line-height: 1.2; }
-    .rb-chat-header-sub { font-family: 'DM Sans',sans-serif; font-size: 11px; color: rgba(255,255,255,.6); }
-    .rb-chat-status { width: 8px; height: 8px; background: #34D399; border-radius: 50%; box-shadow: 0 0 0 2px rgba(52,211,153,.3); flex-shrink: 0; }
-    .rb-chat-close { background: none; border: none; color: rgba(255,255,255,.6); cursor: pointer; padding: 4px; border-radius: 6px; font-size: 18px; line-height: 1; transition: color .15s; flex-shrink: 0; }
-    .rb-chat-close:hover { color: #fff; }
-    .rb-chat-disclaimer { background: #FEF9C3; border-bottom: 1px solid #FDE68A; padding: 6px 14px; font-family: 'DM Sans',sans-serif; font-size: 11px; color: #92400E; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    #rb-chat-messages { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-    #rb-chat-messages::-webkit-scrollbar { width: 4px; }
-    #rb-chat-messages::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
-    .rb-msg { display: flex; flex-direction: column; max-width: 88%; animation: rb-in .18s ease; }
-    @keyframes rb-in { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-    .rb-msg.user { align-self: flex-end; align-items: flex-end; }
-    .rb-msg.assistant { align-self: flex-start; align-items: flex-start; }
-    .rb-bubble { padding: 9px 13px; border-radius: 14px; font-family: 'DM Sans',sans-serif; font-size: 13.5px; line-height: 1.55; word-break: break-word; }
-    .rb-msg.user .rb-bubble { background: linear-gradient(135deg,#4338CA,#3730a3); color: #fff; border-bottom-right-radius: 4px; }
-    .rb-msg.assistant .rb-bubble { background: #F1F5F9; color: #1e293b; border-bottom-left-radius: 4px; }
-    .rb-msg.assistant .rb-bubble a { color: #4338CA; text-decoration: underline; }
-    .rb-typing { display: flex; align-items: center; gap: 4px; padding: 10px 14px; background: #F1F5F9; border-radius: 14px; border-bottom-left-radius: 4px; width: fit-content; }
-    .rb-typing span { width: 7px; height: 7px; background: #94a3b8; border-radius: 50%; display: inline-block; animation: rb-bounce 1.2s infinite ease-in-out; }
-    .rb-typing span:nth-child(2){animation-delay:.15s} .rb-typing span:nth-child(3){animation-delay:.30s}
-    @keyframes rb-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
-    .rb-route-btn { border: none; border-radius: 10px; padding: 9px 14px; font-family: 'DM Sans',sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: opacity .15s; margin-top: 4px; color: white; }
-    .rb-route-btn:hover { opacity: 0.88; }
-    .rb-chat-input-wrap { padding: 10px 12px 12px; border-top: 1px solid #f1f5f9; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #fff; }
-    #rb-chat-input { flex: 1; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 9px 12px; font-family: 'DM Sans',sans-serif; font-size: 13.5px; resize: none; outline: none; line-height: 1.45; max-height: 100px; overflow-y: auto; color: #1e293b; background: #f8fafc; transition: border-color .15s, background .15s; }
-    #rb-chat-input:focus { border-color: #4338CA; background: #fff; }
-    #rb-chat-input::placeholder { color: #94a3b8; }
-    #rb-chat-send { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg,#4338CA,#3730a3); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s, transform .1s; }
-    #rb-chat-send:hover { opacity: .9; } #rb-chat-send:active { transform: scale(.93); } #rb-chat-send:disabled { opacity: .4; cursor: not-allowed; }
-    .rb-chat-footer { padding: 5px 14px 8px; text-align: center; font-family: 'DM Sans',sans-serif; font-size: 10.5px; color: #94a3b8; flex-shrink: 0; }
-
-    /* ── Example chips ── */
-    .rb-chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-top: 1px solid #f1f5f9; background: #fff; flex-shrink: 0; }
-    .rb-chip { background: #f8fafc; border: 1.5px solid #e2e8f0; color: #4338CA; border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; text-align: left; }
-    .rb-chip:hover { background: #EEF2FF; border-color: #4338CA; }
-
-    /* ── UW-Madison APC note ── */
-    .uw-apc-note { background: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #713f12; margin: 12px 0; display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
-    .uw-apc-note a { color: #92400e; font-weight: 600; text-decoration: underline; white-space: nowrap; }
-    .uw-apc-note a:hover { color: #78350f; }
-
-    /* ── Streaming cursor ── */
-    @keyframes rb-blink { 0%,100%{opacity:1} 50%{opacity:0} }
-    .rb-cursor { display: inline-block; animation: rb-blink .7s infinite; color: #4338CA; font-weight: 300; }
-
-    /* ── Altmetric badge ── */
-    .altmetric-wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--border); }
-    .altmetric-label { font-size: 11px; color: var(--text-muted); }
-    .altmetric-badge { display: flex; align-items: center; gap: 8px; }
-    .altmetric-img { width: 64px; height: 64px; object-fit: contain; }
-    .altmetric-score-pill { background: #f97316; color: #fff; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; text-decoration: none; }
-    .altmetric-score-label { font-size: 12px; color: var(--text-muted); }
-    .altmetric-src { font-size: 10px; color: var(--text-light); text-decoration: none; margin-left: auto; }
-    .altmetric-src:hover { color: var(--primary); }
-
-    /* ── Related works ── */
-    .rw-loading { font-size: 12px; color: var(--text-muted); padding: 8px 0; font-style: italic; }
-    .rw-list { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 0; }
-    .rw-header { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
-    .rw-item { padding: 9px 0; border-bottom: 1px solid #f1f5f9; }
-    .rw-item:last-of-type { border-bottom: none; }
-    .rw-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; margin-bottom: 3px; }
-    .rw-authors { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-    .rw-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--text-muted); }
-    .rw-src { font-size: 10px; color: var(--text-light); margin-top: 8px; }
-
-    /* ── Light bar + always-bright coloured tabs ── */
-    .tabs-bar { background: #e8ecf2 !important; box-shadow: 0 2px 12px rgba(0,0,0,.1) !important; border-bottom: none !important; padding-bottom: 0 !important; }
-    .tabs-inner { padding: 8px 10px 0 10px !important; gap: 6px !important; align-items: flex-end !important; }
-    .tab-btn { border-bottom: 3px solid transparent !important; border-radius: 10px 10px 0 0 !important; margin: 0 !important; min-width: 0 !important; transition: filter .18s, transform .15s, box-shadow .18s !important; padding: 10px 14px !important; outline: 2px solid transparent !important; outline-offset: 0px !important; }
-    .tab-btn[data-tab="journals"] { background: #1a2744 !important; }
-    .tab-btn[data-tab="license"]  { background: #065f46 !important; }
-    .tab-btn[data-tab="data"]     { background: #92400e !important; }
-    .tab-btn:hover { filter: brightness(1.12) !important; transform: translateY(-1px) !important; }
-    .tab-btn.active[data-tab="journals"] { background: #1a2744 !important; border-bottom-color: #a5b4fc !important; transform: translateY(-3px) !important; box-shadow: 0 -3px 0 2px #a5b4fc, 0 -6px 16px rgba(99,102,241,.35) !important; }
-    .tab-btn.active[data-tab="license"]  { background: #065f46 !important; border-bottom-color: #6ee7b7 !important; transform: translateY(-3px) !important; box-shadow: 0 -3px 0 2px #6ee7b7, 0 -6px 16px rgba(5,150,105,.35) !important; }
-    .tab-btn.active[data-tab="data"]     { background: #92400e !important; border-bottom-color: #fcd34d !important; transform: translateY(-3px) !important; box-shadow: 0 -3px 0 2px #fcd34d, 0 -6px 16px rgba(217,119,6,.35) !important; }
-    .tab-label-main { font-size: 13px !important; font-weight: 600 !important; color: rgba(255,255,255,.82) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tab-label-sub { color: rgba(255,255,255,.5) !important; font-size: 10.5px !important; }
-    .tab-btn.active .tab-label-main { color: #fff !important; }
-    .tab-btn.active .tab-label-sub  { color: rgba(255,255,255,.75) !important; }
-    .tab-btn:hover  .tab-label-main { color: #fff !important; }
-    .tab-icon-wrap { background: rgba(255,255,255,.15) !important; color: rgba(255,255,255,.85) !important; }
-    .tab-btn.active .tab-icon-wrap { background: rgba(255,255,255,.22) !important; color: #fff !important; }
-
-    /* Mobile tabs */
-    @media(max-width:600px) {
-      .tabs-inner { padding: 6px 6px 0 6px !important; gap: 4px !important; }
-      .tab-btn { padding: 8px 6px !important; gap: 5px !important; flex: 1 !important; border-radius: 8px 8px 0 0 !important; }
-      .tab-btn:hover { transform: translateY(0) !important; }
-      .tab-btn.active { transform: translateY(-2px) !important; }
-      .tab-icon-wrap { width: 24px !important; height: 24px !important; font-size: 12px !important; border-radius: 6px !important; flex-shrink: 0 !important; }
-      .tab-label-main { font-size: 11px !important; }
-      .tab-label-sub  { display: none !important; }
-    }
-    @media(max-width:360px) {
-      .tabs-inner { padding: 5px 3px 0 3px !important; gap: 3px !important; }
-      .tab-btn { padding: 7px 3px !important; gap: 3px !important; }
-      .tab-label-main { font-size: 10px !important; }
-      .tab-icon-wrap { width: 20px !important; height: 20px !important; font-size: 10px !important; }
-    }
-
-    /* Mobile chat bar */
-    #rb-mobile-chat-bar { display: none; }
-    @media(max-width:600px) {
-      #rb-chat-launcher { display: none !important; }
-      #rb-chat-tooltip  { display: none !important; }
-      #rb-mobile-chat-bar {
-        display: flex !important; position: sticky; top: 0; z-index: 91; width: 100%;
-        background: linear-gradient(90deg, #1a2744 0%, #4338CA 100%);
-        align-items: center; padding: 7px 14px; gap: 9px;
-        cursor: pointer; border: none; box-shadow: 0 1px 6px rgba(0,0,0,.25);
-        font-family: 'DM Sans', sans-serif;
-      }
-      .rb-mobile-bar-icon { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', Georgia, serif; font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0; }
-      .rb-mobile-bar-text { display: flex; align-items: baseline; gap: 5px; flex: 1; }
-      .rb-mobile-bar-top  { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .05em; }
-      .rb-mobile-bar-main { font-size: 12px; font-weight: 500; color: #fff; }
-      .rb-mobile-bar-arrow { font-size: 14px; color: rgba(255,255,255,.6); margin-left: auto; flex-shrink: 0; }
-      #rb-chat-panel { bottom: auto !important; top: 0 !important; right: 0 !important; left: 0 !important; width: 100% !important; max-height: 78vh !important; border-radius: 0 0 18px 18px !important; transform-origin: top center !important; }
-    }
-
-    @media(max-width:480px){
-      #rb-chat-panel{width:calc(100vw - 32px);right:16px;bottom:96px}
-      #rb-chat-launcher{right:16px;bottom:16px;padding:8px 14px 8px 10px}
-      .rb-launcher-label-main{font-size:13px}
-      #rb-chat-tooltip{right:16px;bottom:120px}
-    }
-  </style>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#c5050c">
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<!-- Mobile slim chat bar -->
+<button id="rb-mobile-chat-bar" aria-label="Need help? Chat with the ResearchPilot Assistant">
+  <span class="rb-mobile-bar-icon">?</span>
+  <span class="rb-mobile-bar-text">
+    <span class="rb-mobile-bar-top">Need help?</span>
+    <span class="rb-mobile-bar-main">Ask the ResearchPilot Assistant</span>
+  </span>
+  <span class="rb-mobile-bar-arrow">›</span>
+</button>
+
 <header class="site-header">
   <div class="header-inner">
-    <a href="/" class="brand">
-      <img src="assets/researchbeemascot.png" class="brand-mascot" alt="ResearchPilot mascot">
-      <div>
-        <span class="brand-name">ResearchPilot</span>
-        <span class="brand-sub">AI Publishing Assistant</span>
-      </div>
+    <a href="./" class="brand" aria-label="ResearchPilot home">
+      <img src="assets/logo.svg" class="brand-logo" alt="ResearchPilot">
+      <span class="brand-tag">for UW-Madison researchers</span>
     </a>
+    <nav class="header-links" aria-label="External links">
+      <a href="https://www.library.wisc.edu/research-support/scholarly-communication/" target="_blank" rel="noopener">UW-Madison Libraries</a>
+      <a href="https://github.com/mohithnikesh1/ResearchPilot" target="_blank" rel="noopener">GitHub</a>
+    </nav>
   </div>
 </header>
 
-<div class="lb-welcome">
-  <div class="lb-mascot">
-    <img src="assets/researchbeemascot.png" class="lb-mascot-img" alt="ResearchPilot">
-    <h1 class="lb-title">ResearchPilot</h1>
-    <p class="lb-sub">Your AI publishing assistant — find the right journal, check self-archiving rights, and deposit to the right repository.</p>
+<section class="hero">
+  <img src="assets/logo.svg" class="hero-logo" alt="" aria-hidden="true">
+  <h1>ResearchPilot</h1>
+  <p class="hero-sub">
+    <strong>Find the right journal. Check your rights. Deposit to the right repository.</strong><br>
+    Journal matching from 32K+ ranked titles, verified DOI-level self-archiving policies, and curated
+    data-repository guidance — in one place.
+  </p>
+  <p class="hero-note">An independent tool built to help University of Wisconsin-Madison researchers · not an official UW-Madison Libraries service</p>
+  <div class="hero-cards">
+    <button class="hero-card" onclick="activateTab('journals');document.getElementById('tab-journals').scrollIntoView({behavior:'smooth'})">
+      <span class="hero-card-icon" aria-hidden="true">📰</span>
+      <span>
+        <span class="hero-card-title">Find a journal</span>
+        <span class="hero-card-desc">Browse by subject or analyse your manuscript for ranked, OA-aware matches</span>
+      </span>
+    </button>
+    <button class="hero-card" onclick="activateTab('license');document.getElementById('tab-license').scrollIntoView({behavior:'smooth'})">
+      <span class="hero-card-icon" aria-hidden="true">🛡️</span>
+      <span>
+        <span class="hero-card-title">Check self-archiving rights</span>
+        <span class="hero-card-desc">Enter a DOI for a verified, article-level Green OA answer — grounded, not guessed</span>
+      </span>
+    </button>
+    <button class="hero-card" onclick="activateTab('data');document.getElementById('tab-data').scrollIntoView({behavior:'smooth'})">
+      <span class="hero-card-icon" aria-hidden="true">🗄️</span>
+      <span>
+        <span class="hero-card-title">Deposit your data</span>
+        <span class="hero-card-desc">Curated repository matches — MINDS@UW and Dryad are free for UW-Madison</span>
+      </span>
+    </button>
   </div>
-</div>
+</section>
 
 <div class="tabs-bar">
-  <div class="tabs-inner">
-    <button class="tab-btn active" data-tab="journals">
-      <span class="tab-icon-wrap tab-icon-journal">📰</span>
+  <div class="tabs-inner" role="tablist" aria-label="ResearchPilot tools">
+    <button class="tab-btn active" data-tab="journals" role="tab" aria-selected="true">
+      <span class="tab-icon-wrap" aria-hidden="true">📰</span>
       <span class="tab-label-wrap">
         <span class="tab-label-main">Journal submission</span>
         <span class="tab-label-sub">Find &amp; rank journals</span>
       </span>
     </button>
-    <button class="tab-btn" data-tab="license">
-      <span class="tab-icon-wrap tab-icon-license">🛡</span>
+    <button class="tab-btn" data-tab="license" role="tab" aria-selected="false">
+      <span class="tab-icon-wrap" aria-hidden="true">🛡️</span>
       <span class="tab-label-wrap">
         <span class="tab-label-main">License checking</span>
         <span class="tab-label-sub">Self-archiving rights</span>
       </span>
     </button>
-    <button class="tab-btn" data-tab="data">
-      <span class="tab-icon-wrap tab-icon-data">🗄</span>
+    <button class="tab-btn" data-tab="data" role="tab" aria-selected="false">
+      <span class="tab-icon-wrap" aria-hidden="true">🗄️</span>
       <span class="tab-label-wrap">
         <span class="tab-label-main">Data repository</span>
         <span class="tab-label-sub">Find the right repo</span>
@@ -221,27 +96,28 @@
   </div>
 </div>
 
-<main class="main-content">
-  <!-- Tab 1 -->
-  <div id="tab-journals" class="tab-panel active">
+<main class="main-content" id="main">
+  <!-- ═══ Tab 1 — Journals ═══ -->
+  <div id="tab-journals" class="tab-panel active" role="tabpanel">
     <div class="mode-selector">
       <button class="mode-btn active" data-mode="subject" onclick="switchMode('subject')">
-        <div class="mode-icon-wrap mode-icon-subject">📊</div>
-        <div class="mode-text">
+        <span class="mode-icon-wrap" aria-hidden="true">📊</span>
+        <span class="mode-text">
           <span class="mode-title">Browse by subject</span>
-          <span class="mode-desc">Type a discipline — get top 15 ranked journals instantly from 53K+ indexed titles</span>
+          <span class="mode-desc">Type a discipline — get top ranked journals instantly from 32K+ indexed titles</span>
           <span class="mode-tag">Instant · No manuscript needed</span>
-        </div>
+        </span>
       </button>
       <button class="mode-btn" data-mode="manuscript" onclick="switchMode('manuscript')">
-        <div class="mode-icon-wrap mode-icon-manuscript">📝</div>
-        <div class="mode-text">
+        <span class="mode-icon-wrap" aria-hidden="true">📝</span>
+        <span class="mode-text">
           <span class="mode-title">Analyse manuscript</span>
-          <span class="mode-desc">Paste your abstract for AI-powered journal matching with full Green OA policy breakdown</span>
-          <span class="mode-tag">AI-powered · Personalised · 15 journals</span>
-        </div>
+          <span class="mode-desc">Paste your abstract for AI-powered matching with a full Green OA policy breakdown</span>
+          <span class="mode-tag">AI-powered · Personalised</span>
+        </span>
       </button>
     </div>
+
     <div id="mode-subject">
       <form id="subject-form">
         <div class="card">
@@ -250,12 +126,12 @@
             <p>Type any subject, discipline, or research area. Spelling corrections and nearest matches are handled automatically.</p>
           </div>
           <div class="card-body">
-            <div class="form-group" style="max-width:500px">
+            <div class="form-group" style="max-width:520px">
               <label for="s-subject" id="lbl-subject">Subject / discipline <span class="req">*</span></label>
-              <input id="s-subject" type="text" required placeholder="e.g. Petroleum Engineering, Machine Learning, Cardiology..." autocomplete="off">
-              <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Try: Computer Science, Medicine, Environmental Science, Library Science, Physics...</div>
+              <input id="s-subject" type="text" required placeholder="e.g. Machine Learning, Cardiology, Limnology…" autocomplete="off">
+              <div class="field-hint">Try: Computer Science, Medicine, Environmental Science, Library Science, Physics…</div>
             </div>
-            <button type="submit" class="btn btn-primary" style="max-width:300px;margin-top:8px">
+            <button type="submit" class="btn btn-primary" style="max-width:300px;margin-top:10px">
               <span id="btn-subject-submit">Search journals</span>
             </button>
           </div>
@@ -264,6 +140,7 @@
       <div id="subject-progress" class="progress-box"></div>
       <div id="subject-results" class="hidden"></div>
     </div>
+
     <div id="mode-manuscript" style="display:none">
       <form id="journal-form">
         <div class="card">
@@ -274,11 +151,11 @@
           <div class="card-body">
             <div class="form-grid form-2col">
               <div class="form-group form-full"><label for="j-title" id="lbl-title">Title <span class="req">*</span></label><input id="j-title" type="text" required placeholder="Full manuscript title"></div>
-              <div class="form-group form-full"><label for="j-abstract" id="lbl-abstract">Abstract <span class="req">*</span></label><textarea id="j-abstract" required rows="6" placeholder="Paste your full abstract here..."></textarea></div>
-              <div class="form-group"><label for="j-keywords" id="lbl-keywords">Keywords (comma-separated)</label><input id="j-keywords" type="text" placeholder="e.g. machine learning, library, open access"></div>
+              <div class="form-group form-full"><label for="j-abstract" id="lbl-abstract">Abstract <span class="req">*</span></label><textarea id="j-abstract" required rows="6" placeholder="Paste your full abstract here…"></textarea></div>
+              <div class="form-group"><label for="j-keywords" id="lbl-keywords">Keywords (comma-separated)</label><input id="j-keywords" type="text" placeholder="e.g. machine learning, open access"></div>
               <div class="form-group"><label for="j-discipline" id="lbl-discipline">Discipline / sub-discipline</label><input id="j-discipline" type="text" placeholder="e.g. Library and Information Science"></div>
               <div class="form-group"><label for="j-article-type" id="lbl-article-type">Article type</label><select id="j-article-type"><option>Original research article</option><option>Review article</option><option>Systematic review / meta-analysis</option><option>Short communication</option><option>Case study</option><option>Methods paper</option><option>Perspective / commentary</option><option>Letter</option><option>Conference paper</option></select></div>
-              <div class="form-group"><label for="j-methods" id="lbl-methods">Methods (brief)</label><input id="j-methods" type="text" placeholder="e.g. survey, experiment, case study, RAG pipeline"></div>
+              <div class="form-group"><label for="j-methods" id="lbl-methods">Methods (brief)</label><input id="j-methods" type="text" placeholder="e.g. survey, experiment, RAG pipeline"></div>
             </div>
             <div class="section-sep">
               <div class="section-label">Strategy &amp; compliance</div>
@@ -289,7 +166,7 @@
                 <div class="form-group"><label for="j-ranking-src" id="lbl-ranking-src">Ranking source</label><select id="j-ranking-src"><option>Either (label clearly)</option><option>Scopus</option><option>SCImago</option></select></div>
                 <div class="form-group"><label for="j-speed" id="lbl-speed">Publication speed</label><select id="j-speed"><option>Standard</option><option>Fast turnaround preferred</option><option>No preference</option></select></div>
                 <div class="form-group"><label for="j-repo-target" id="lbl-repo-target">Repository target</label><select id="j-repo-target"><option>Institutional repository</option><option>Subject repository</option><option>Both</option><option>Not sure</option></select></div>
-                <div class="form-group"><label for="j-funder" id="lbl-funder">Funder</label><input id="j-funder" type="text" placeholder="e.g. ERC, NIH, Wellcome, cOAlition S"></div>
+                <div class="form-group"><label for="j-funder" id="lbl-funder">Funder</label><input id="j-funder" type="text" placeholder="e.g. NIH, NSF, USDA, Wellcome"></div>
                 <div class="form-group"><label for="j-institution" id="lbl-institution">Institution</label><input id="j-institution" type="text" placeholder="e.g. University of Wisconsin-Madison"></div>
                 <div class="form-group"><label for="j-country" id="lbl-country">Country / region</label><input id="j-country" type="text" placeholder="e.g. United States"></div>
                 <div class="form-group"><label for="j-audience" id="lbl-audience">Target audience</label><input id="j-audience" type="text" placeholder="e.g. library practitioners, AI researchers"></div>
@@ -297,8 +174,8 @@
                 <div class="form-group form-full"><label for="j-avoid" id="lbl-avoid">Journals to avoid (optional)</label><input id="j-avoid" type="text" placeholder="Journals to exclude from recommendations"></div>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary" style="margin-top:8px">
-              <span>🔍</span> <span id="btn-journal-submit">Find journals &amp; check OA policy</span>
+            <button type="submit" class="btn btn-primary" style="margin-top:12px">
+              <span aria-hidden="true">🔍</span> <span id="btn-journal-submit">Find journals &amp; check OA policy</span>
             </button>
           </div>
         </div>
@@ -308,26 +185,31 @@
     </div>
   </div>
 
-  <!-- Tab 2 -->
-  <div id="tab-license" class="tab-panel">
+  <!-- ═══ Tab 2 — License ═══ -->
+  <div id="tab-license" class="tab-panel" role="tabpanel">
     <form id="license-form">
       <div class="card">
         <div class="card-header">
-          <h2>🛡 Check journal Green OA / self-archiving policy</h2>
-          <p>Look up version-specific deposit permissions, embargoes, and licence conditions for a known journal.</p>
+          <h2>🛡️ Check journal Green OA / self-archiving policy</h2>
+          <p>Version-specific deposit permissions, embargoes, and licence conditions — with deposit guidance for MINDS@UW, ShareYourPaper, and Zenodo.</p>
         </div>
         <div class="card-body">
           <div class="form-grid form-2col">
-            <div class="form-group"><label for="l-journal" id="lbl-l-journal">Journal name <span class="req">*</span></label><input id="l-journal" type="text" required placeholder="e.g. Nature Communications"></div>
+            <div class="doi-callout">
+              <strong>💡 Best result: enter your article's DOI or URL.</strong>
+              With a DOI, the answer is verified against the OA.Works Permissions database (the dataset behind cOAlition S's Journal Checker Tool) — not AI-generated. Without one, you'll get a journal-level estimate marked "Not confirmed".
+            </div>
+            <div class="form-group form-full"><label for="l-doi" id="lbl-l-doi">Article DOI or URL (recommended)</label><input id="l-doi" type="text" placeholder="e.g. 10.1002/adma.202301234 or https://doi.org/10.1002/adma.202301234"></div>
+            <div class="form-group"><label for="l-journal" id="lbl-l-journal">Journal name <span class="req" title="Required when no DOI is given">*</span></label><input id="l-journal" type="text" placeholder="e.g. Nature Communications"></div>
             <div class="form-group"><label for="l-issn" id="lbl-l-issn">ISSN (optional — improves accuracy)</label><input id="l-issn" type="text" placeholder="e.g. 2041-1723"></div>
             <div class="form-group"><label for="l-publisher" id="lbl-l-publisher">Publisher (optional)</label><input id="l-publisher" type="text" placeholder="e.g. Springer Nature"></div>
             <div class="form-group"><label for="l-version" id="lbl-l-version">Manuscript version of interest</label><select id="l-version"><option>All versions</option><option>Submitted version / preprint</option><option>Accepted manuscript (AAM / postprint)</option><option>Published version (VoR)</option></select></div>
-            <div class="form-group"><label for="l-funder" id="lbl-l-funder">Funder (affects rights retention)</label><input id="l-funder" type="text" placeholder="e.g. cOAlition S, ERC, NIH, Wellcome"></div>
+            <div class="form-group"><label for="l-funder" id="lbl-l-funder">Funder (affects rights retention)</label><input id="l-funder" type="text" placeholder="e.g. NIH, NSF, cOAlition S, Wellcome"></div>
             <div class="form-group"><label for="l-repo" id="lbl-l-repo">Intended deposit location</label><select id="l-repo"><option>Institutional repository</option><option>Subject repository (e.g. arXiv, PMC, SSRN)</option><option>Personal website</option><option>ResearchGate / Academia.edu</option><option>Preprint server</option><option>Both institutional &amp; subject</option></select></div>
             <div class="form-group"><label for="l-licence" id="lbl-l-licence">Intended licence</label><select id="l-licence"><option>CC BY</option><option>CC BY-NC</option><option>CC BY-NC-ND</option><option>CC BY-SA</option><option>CC0</option><option>Publisher's bespoke licence</option><option>Not sure</option></select></div>
             <div class="form-group form-full"><label for="l-notes" id="lbl-l-notes">Additional context (optional)</label><textarea id="l-notes" rows="3" placeholder="Already accepted? Already published? Embargo concerns? Funder mandate deadlines?"></textarea></div>
           </div>
-          <button type="submit" class="btn btn-primary" style="margin-top:8px">🛡 <span id="btn-license-submit">Check Green OA policy</span></button>
+          <button type="submit" class="btn btn-primary" style="margin-top:12px"><span aria-hidden="true">🛡️</span> <span id="btn-license-submit">Check Green OA policy</span></button>
         </div>
       </div>
     </form>
@@ -335,20 +217,20 @@
     <div id="license-results" class="hidden"></div>
   </div>
 
-  <!-- Tab 3 -->
-  <div id="tab-data" class="tab-panel">
+  <!-- ═══ Tab 3 — Data ═══ -->
+  <div id="tab-data" class="tab-panel" role="tabpanel">
     <form id="repo-form">
       <div class="card">
         <div class="card-header">
-          <h2>🗄 Find a research data repository</h2>
-          <p>Describe your dataset. We'll match it to domain-specific and generalist repositories (re3data, FAIRsharing, OpenAIRE, Zenodo, and more). UW-Madison researchers: Dryad and MINDS@UW are available free of charge.</p>
+          <h2>🗄️ Find a research data repository</h2>
+          <p>Describe your dataset and get matched to domain-specific and generalist repositories from a curated, verified registry. UW-Madison researchers: MINDS@UW and Dryad are free of charge and always listed first.</p>
         </div>
         <div class="card-body">
           <div class="form-grid form-2col">
             <div class="form-group form-full"><label for="r-title" id="lbl-r-title">Dataset title <span class="req">*</span></label><input id="r-title" type="text" required placeholder="Descriptive title for your dataset"></div>
             <div class="form-group form-full"><label for="r-desc" id="lbl-r-desc">Description <span class="req">*</span></label><textarea id="r-desc" required rows="4" placeholder="What does the dataset contain, how was it collected, and what is its intended reuse?"></textarea></div>
             <div class="form-group"><label for="r-discipline" id="lbl-r-discipline">Discipline / domain <span class="req">*</span></label><input id="r-discipline" type="text" required placeholder="e.g. genomics, climate science, engineering"></div>
-            <div class="form-group"><label for="r-datatypes" id="lbl-r-datatypes">Data types <span class="req">*</span></label><input id="r-datatypes" type="text" required placeholder="e.g. tabular, images, sequencing reads, time series"></div>
+            <div class="form-group"><label for="r-datatypes" id="lbl-r-datatypes">Data types <span class="req">*</span></label><input id="r-datatypes" type="text" required placeholder="e.g. tabular, images, sequencing reads"></div>
             <div class="form-group"><label for="r-formats" id="lbl-r-formats">File formats</label><input id="r-formats" type="text" placeholder="e.g. CSV, FASTQ, NetCDF, TIFF, HDF5"></div>
             <div class="form-group"><label for="r-size" id="lbl-r-size">Approximate total size</label><input id="r-size" type="text" placeholder="e.g. 250 MB / 5 GB / 2 TB"></div>
           </div>
@@ -371,10 +253,10 @@
               <div class="form-group"><label for="r-country" id="lbl-r-country">Country / region</label><input id="r-country" type="text" placeholder="e.g. United States"></div>
               <div class="form-group"><label for="r-preferred" id="lbl-r-preferred">Preferred / required repository (optional)</label><input id="r-preferred" type="text" placeholder="e.g. Dryad, Zenodo, GenBank"></div>
               <div class="form-group form-full"><label for="r-publication" id="lbl-r-publication">Linked publication / DOI (optional)</label><input id="r-publication" type="text" placeholder="Related article DOI or title"></div>
-              <div class="form-group form-full"><label for="r-notes" id="lbl-r-notes">Additional notes</label><textarea id="r-notes" rows="3" placeholder="Any special requirements, funder mandates, or context..."></textarea></div>
+              <div class="form-group form-full"><label for="r-notes" id="lbl-r-notes">Additional notes</label><textarea id="r-notes" rows="3" placeholder="Any special requirements, funder mandates, or context…"></textarea></div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" style="margin-top:8px">🗄 <span id="btn-repo-submit">Find best repositories</span></button>
+          <button type="submit" class="btn btn-primary" style="margin-top:12px"><span aria-hidden="true">🗄️</span> <span id="btn-repo-submit">Find best repositories</span></button>
         </div>
       </div>
     </form>
@@ -385,55 +267,49 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <p>Ranking metrics sourced from SCImago Journal Rank data (2025, © SCImago Lab, based on Scopus® data). Always verify policies on <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">Open Policy Finder</a> and repositories on <a href="https://www.re3data.org" target="_blank" rel="noopener">re3data</a> before deposit.</p>
-    <p><strong>Privacy &amp; AI notice:</strong> text you submit (titles, abstracts, dataset descriptions) is sent to the OpenAI API to generate results and is not used to train OpenAI models. Do not submit confidential or sensitive information. AI-generated recommendations can contain errors — always use the verify links.</p>
+    <div class="footer-brand">
+      <span class="footer-brand-name"><span>Research</span>Pilot</span>
+    </div>
+    <p>An <strong>independent tool</strong> built to help University of Wisconsin-Madison researchers. Not an official service of UW-Madison or UW-Madison Libraries.</p>
+    <p>Ranking metrics sourced from SCImago Journal Rank data (2025, © SCImago Lab, based on Scopus® data). DOI-level self-archiving permissions from the <a href="https://shareyourpaper.org/permissions/about" target="_blank" rel="noopener">OA.Works Permissions API</a>. Always verify policies on <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">Open Policy Finder</a> and repositories on <a href="https://www.re3data.org" target="_blank" rel="noopener">re3data</a> before deposit.</p>
+    <p><strong>Privacy &amp; AI notice:</strong> text you submit (titles, abstracts, dataset descriptions) is sent to the OpenAI API to generate results and is not used to train OpenAI models (per OpenAI API policy). Do not submit confidential or sensitive information. AI-generated recommendations can contain errors — always use the verify links.</p>
     <p>UW-Madison APC agreement and repository details last verified May 2026 — confirm current terms at the <a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support/" target="_blank" rel="noopener">UW-Madison Libraries publishing support page</a>.</p>
-    <p><a href="https://github.com/mohithnikesh1/ResearchPilot" target="_blank" rel="noopener">GitHub</a></p>
+    <p class="footer-note"><a href="https://github.com/mohithnikesh1/ResearchPilot" target="_blank" rel="noopener">Source on GitHub</a> · MIT licence</p>
   </div>
 </footer>
 
-<!-- Mobile slim chat bar -->
-<button id="rb-mobile-chat-bar" aria-label="Need help? Chat with ResearchPilot">
-  <span class="rb-mobile-bar-icon">?</span>
-  <span class="rb-mobile-bar-text">
-    <span class="rb-mobile-bar-top">Need help?</span>
-    <span class="rb-mobile-bar-main">Chat with ResearchPilot</span>
-  </span>
-  <span class="rb-mobile-bar-arrow">›</span>
-</button>
-
-<!-- Chat Widget -->
-<div id="rb-chat-tooltip">💬 Ask ResearchPilot anything</div>
-<button id="rb-chat-launcher" aria-label="Open ResearchPilot chat">
-  <span class="rb-launcher-icon">?</span>
+<!-- Chat widget -->
+<div id="rb-chat-tooltip">💬 Ask the ResearchPilot Assistant anything</div>
+<button id="rb-chat-launcher" aria-label="Open the ResearchPilot Assistant chat">
+  <span class="rb-launcher-icon" aria-hidden="true">?</span>
   <span class="rb-launcher-label">
     <span class="rb-launcher-label-top">Need help?</span>
-    <span class="rb-launcher-label-main">Chat with ResearchPilot</span>
+    <span class="rb-launcher-label-main">ResearchPilot Assistant</span>
   </span>
   <span id="rb-chat-badge"></span>
 </button>
-<div id="rb-chat-panel" role="dialog" aria-label="ResearchPilot chat assistant">
+<div id="rb-chat-panel" role="dialog" aria-label="ResearchPilot Assistant chat">
   <div class="rb-chat-header">
-    <img src="assets/researchbeemascot.png" alt="ResearchPilot">
+    <span class="rb-chat-avatar" aria-hidden="true">R</span>
     <div class="rb-chat-header-text">
-      <span class="rb-chat-header-name">ResearchPilot</span>
-      <span class="rb-chat-header-sub">AI Publishing Assistant</span>
+      <span class="rb-chat-header-name">ResearchPilot Assistant</span>
+      <span class="rb-chat-header-sub">Publishing &amp; open access help</span>
     </div>
     <div class="rb-chat-status" title="Online"></div>
     <button class="rb-chat-close" id="rb-chat-close" aria-label="Close chat">×</button>
   </div>
   <div class="rb-chat-disclaimer">
     ⚠️ Always verify OA policies on
-    <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" style="color:#92400E;font-weight:600;margin-left:3px">Open Policy Finder</a>
+    <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">Open Policy Finder</a>
   </div>
   <div id="rb-chat-messages" aria-live="polite"></div>
   <div class="rb-chat-input-wrap">
     <textarea id="rb-chat-input" rows="1" placeholder="Ask about publishing rights, open access, or data repositories…" aria-label="Chat message" maxlength="2000"></textarea>
     <button id="rb-chat-send" aria-label="Send message" disabled>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14.5 8L2 2l2.5 6L2 14l12.5-6z" fill="white"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.5 8L2 2l2.5 6L2 14l12.5-6z" fill="white"/></svg>
     </button>
   </div>
-  <div class="rb-chat-footer">ResearchPilot · University of Wisconsin-Madison</div>
+  <div class="rb-chat-footer">ResearchPilot · an independent tool for UW-Madison researchers</div>
 </div>
 
 <script type="module" src="js/app.js"></script>
