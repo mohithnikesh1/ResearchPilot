@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" role="img" aria-label="ResearchPilot">
+  <style>
+    .word { font-family: 'Red Hat Display', 'Segoe UI', Arial, sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.5px; }
+    .w1 { fill: #c5050c; }
+    .w2 { fill: #282728; }
+    .plane { fill: #c5050c; }
+    .trail { stroke: #c5050c; stroke-width: 2.5; stroke-linecap: round; fill: none; stroke-dasharray: 6 8; animation: dash 1.6s linear infinite; opacity: .55; }
+    @keyframes dash { to { stroke-dashoffset: -28; } }
+    .planeG { animation: fly 3.2s ease-in-out infinite; transform-origin: 24px 24px; }
+    @keyframes fly { 0%,100% { transform: translateY(0) rotate(0deg);} 50% { transform: translateY(-4px) rotate(-4deg);} }
+    @media (prefers-reduced-motion: reduce) { .trail, .planeG { animation: none; } }
+  </style>
+  <g class="planeG">
+    <path class="plane" d="M6 30 L44 14 L30 34 L26 30 L20 38 L19 31 Z"/>
+    <path d="M26 30 L30 34 L27 40 Z" fill="#9b0000"/>
+  </g>
+  <path class="trail" d="M4 44 C 14 40, 24 46, 36 41"/>
+  <text x="56" y="42" class="word"><tspan class="w1">Research</tspan><tspan class="w2">Pilot</tspan></text>
+</svg>
