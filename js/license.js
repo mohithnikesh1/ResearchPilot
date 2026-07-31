@@ -51,7 +51,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
           <button class="lookup-suggestion-chip" data-idx="${i}" style="
             display:flex;align-items:flex-start;gap:8px;width:100%;
             background:${bg};border:1.5px solid ${bc};border-radius:9px;
-            padding:7px 11px;font-family:'DM Sans',sans-serif;cursor:pointer;
+            padding:7px 11px;font-family:'Red Hat Text',sans-serif;cursor:pointer;
             text-align:left;transition:box-shadow .15s;margin-bottom:4px;
           "
           onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.1)'"
@@ -105,7 +105,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
               display:inline-flex;align-items:center;gap:6px;
               background:var(--success-light);border:1px solid #6ee7b7;
               border-radius:8px;padding:4px 10px;font-size:11.5px;
-              color:var(--success);font-family:'DM Sans',sans-serif;
+              color:var(--success);font-family:'Red Hat Text',sans-serif;
             ">
               <span style="font-weight:700">✓</span>
               <span>Filled from <strong>${esc(s.source)}</strong></span>
@@ -124,7 +124,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
           display:inline-flex;align-items:center;gap:6px;
           background:#fef3c7;border:1.5px solid #fcd34d;border-radius:20px;
           padding:4px 12px;font-size:12px;color:#92400e;
-          font-family:'DM Sans',sans-serif;cursor:pointer;
+          font-family:'Red Hat Text',sans-serif;cursor:pointer;
           font-weight:500;transition:background .15s;margin:2px;
         "
         onmouseover="this.style.background='#fde68a'"
@@ -191,6 +191,13 @@ export function licenseTab() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const doiVal     = document.getElementById("l-doi")?.value?.trim() || "";
+    const journalVal = document.getElementById("l-journal")?.value?.trim() || "";
+    if (!doiVal && !journalVal) {
+      document.getElementById("l-doi")?.focus();
+      alert("Please enter an article DOI/URL (recommended) or a journal name.");
+      return;
+    }
     const submitBtn = form.querySelector(".btn-primary");
     submitBtn.disabled = true;
     submitBtn.innerHTML = `🔍 Checking policy...`;
@@ -229,6 +236,7 @@ function getLicenseData() {
   const g = id => document.getElementById(id)?.value?.trim() || "";
   return {
     journal_name:        g("l-journal"),
+    doi:                 g("l-doi"),
     issn:                g("l-issn"),
     publisher:           g("l-publisher"),
     manuscript_version:  g("l-version"),
@@ -302,31 +310,102 @@ function renderDepositRecommendation(r) {
     </div>`;
 }
 
+function renderSubjectRepos(repos) {
+  if (!repos?.length) return "";
+  return `
+    <div class="card mt-6">
+      <div class="card-header"><h2>📚 Permitted subject repositories</h2>
+        <p>The verified policy permits subject-repository deposit. These match this journal's subject areas.</p></div>
+      <div class="card-body">
+        <div class="subj-repo-grid">
+          ${repos.map(r => `
+            <div class="subj-repo-card">
+              <h4><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a></h4>
+              <p>${esc(r.scope || "")}</p>
+              <div class="subj-repo-meta">
+                ${r.versions ? `Versions: ${esc(r.versions)}<br>` : ""}
+                ${r.verified_note ? esc(r.verified_note) : ""}
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderMindsCard(m) {
+  if (!m) return "";
+  return `
+    <div class="minds-card">
+      <h3>🏛️ ${esc(m.title || "Deposit to MINDS@UW")}</h3>
+      <p>${esc(m.message || "")}</p>
+      ${m.metadata_tip ? `<p class="minds-tip">${esc(m.metadata_tip)}</p>` : ""}
+      <div class="minds-links">
+        <a class="vlink" href="${esc(m.url)}" target="_blank" rel="noopener">MINDS@UW</a>
+        ${m.contact ? `<a class="vlink" href="${esc(m.contact)}" target="_blank" rel="noopener">Contact the MINDS team</a>` : ""}
+        ${m.library_url ? `<a class="vlink" href="${esc(m.library_url)}" target="_blank" rel="noopener">UW-Madison Libraries</a>` : ""}
+      </div>
+    </div>`;
+}
+
 function renderLicenseResults(result, container) {
   const journals = result.journals || [];
-  const opfBanner = result.opf_verified
-    ? `<div style="background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px">
-         ✅ <strong>Verified via Open Policy Finder</strong> — this policy is based on live data from
-         <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">openpolicyfinder.jisc.ac.uk</a> (Jisc).
+  const oa       = journals[0]?.green_oa || {};
+  const isDoiVerified = result.source_mode === "doi" && oa.policy_status === "Confirmed";
+
+  const banner = isDoiVerified
+    ? `<div class="banner-verified">
+         ✅ <strong>Verified, article-level answer.</strong> Policy facts retrieved from the
+         <a href="https://shareyourpaper.org/permissions/about" target="_blank" rel="noopener">OA.Works Permissions database</a>
+         — the dataset behind cOAlition S's Journal Checker Tool — for
+         ${result.doi_url ? `<a href="${esc(result.doi_url)}" target="_blank" rel="noopener">${esc(result.doi)}</a>` : "this DOI"}.
+         The AI wrote only the advisory prose, not the facts.
        </div>`
-    : `<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px">
-         ⚠️ <strong>AI-generated — not verified.</strong> No live Open Policy Finder record was found for this journal.
-         Verify the policy at <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">Open Policy Finder</a>
-         before depositing.
+    : `<div class="banner-unverified">
+         ⚠️ <strong>Not verified${result.source_mode === "doi" ? " — no permission record found for this DOI" : " — journal-level estimate"}.</strong>
+         For a verified answer, ${result.source_mode === "doi" ? "double-check the DOI or " : "enter your article's DOI above, or "}
+         check <a href="https://openpolicyfinder.jisc.ac.uk" target="_blank" rel="noopener">Open Policy Finder</a> before depositing.
        </div>`;
+
+  const depositStatement = oa.deposit_statement
+    ? `<div class="deposit-statement">
+         <strong>📋 Required deposit statement</strong> — include this text with the deposited file:
+         <code>${esc(oa.deposit_statement)}</code>
+       </div>` : "";
+
+  const evidence = (oa.evidence_urls?.length || oa.policy_updated)
+    ? `<div class="policy-notes">
+         ${oa.policy_updated ? `<p><strong>Policy record last updated:</strong> ${esc(oa.policy_updated)}</p>` : ""}
+         ${oa.copyright_owner ? `<p><strong>Copyright owner:</strong> ${esc(oa.copyright_owner)}${oa.copyright_name ? ` (${esc(oa.copyright_name)})` : ""}</p>` : ""}
+         ${oa.evidence_urls?.length ? `<div class="evidence-links">
+            <span class="verify-lbl">Policy evidence:</span>
+            ${oa.evidence_urls.map((u,i) => `<a class="vlink" href="${esc(u)}" target="_blank" rel="noopener">Source ${i+1}</a>`).join("")}
+         </div>` : ""}
+       </div>` : "";
+
+  const sypAction = result.shareyourpaper_url
+    ? `<div class="action-item"><span class="a-num">→</span>
+         <span>Deposit via <a href="${esc(result.shareyourpaper_url)}" target="_blank" rel="noopener"><strong>ShareYourPaper</strong></a>
+         — checks permissions automatically and places an open copy in <strong>Zenodo</strong>.
+         If you prefer, you can also deposit directly in <a href="https://zenodo.org" target="_blank" rel="noopener">Zenodo</a>.</span>
+       </div>` : "";
+
   container.innerHTML = `
-    ${renderMascotRow('Here is the self-archiving policy for your journal.')}
-    ${opfBanner}
+    ${renderMascotRow('Here is the self-archiving answer for your article.')}
+    ${banner}
     <div class="results-header">
       <h2 class="results-title">Policy result</h2>
       <div class="results-meta">
         <button class="btn btn-ghost" id="license-reset">↩ Start over</button>
       </div>
     </div>
-    <h3 style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:14px">🟢 Green OA / self-archiving by version</h3>
     ${journals.map(j => renderPolicyCard(j)).join("")}
+    ${depositStatement}
+    ${evidence}
     ${renderDepositRecommendation(result.repository_recommendation)}
     ${renderNextActions(result.next_actions, result.global_notes)}
+    ${sypAction}
+    ${renderSubjectRepos(result.subject_repositories)}
+    ${renderMindsCard(result.minds)}
   `;
 
   document.getElementById("license-reset")?.addEventListener("click", () => {

@@ -1,12 +1,10 @@
 // render.js - shared rendering helpers
 
-const MASCOT = "assets/researchbeemascot.png";
-const _HF    = "https://mohithnikesh-researchpilot.hf.space";
+const _HF = "https://mohithnikesh-researchpilot.hf.space";
 
 export function renderMascotRow(message) {
   return `
     <div class="results-mascot-row">
-      <img src="${MASCOT}" class="results-mascot-img" alt="ResearchPilot">
       <div class="results-mascot-bubble">${message}</div>
     </div>`;
 }
@@ -132,9 +130,10 @@ export function renderRepoCard(r, idx) {
         <div class="j-meta">#${idx + 1} · ${esc(r.type)} · ${esc(r.cost)}</div>
         <div class="j-title">
           ${esc(r.name)}
-          ${r.url ? `<a href="${esc(r.url)}" target="_blank" style="font-size:14px;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--primary);margin-left:8px">↗ visit</a>` : ""}
+          ${r.url ? `<a href="${esc(r.url)}" target="_blank" style="font-size:14px;font-family:'Red Hat Text',sans-serif;font-weight:400;color:var(--primary);margin-left:8px">↗ visit</a>` : ""}
         </div>
         <div class="badge-row">
+          ${r.is_institutional ? `<span class="badge b-primary">\ud83c\udf93 Free for UW-Madison</span>` : ""}
           ${confidenceBadge(r.confidence)}
           ${accessBadge(r.access_model)}
           ${fairBadge(r.fair_alignment)}
@@ -163,7 +162,8 @@ export function renderRepoCard(r, idx) {
             <a href="https://researchdata.wisc.edu/data-repositories/" target="_blank" rel="noopener">UW Research Data Services ↗</a>
           </div>` : ""}
         ${r.risk_flag ? `<p style="color:var(--danger);font-size:13px;display:flex;gap:6px;align-items:flex-start"><span>[!]</span><span>${esc(r.risk_flag)}</span></p>` : ""}
-        <p style="font-size:12px"><strong>Verification:</strong> ${esc(r.verification_status)}</p>
+        ${r.verification_status ? `<p style="font-size:12px"><strong>Verification:</strong> ${esc(r.verification_status)}</p>` : ""}
+        ${r.verified_note ? `<p style="font-size:11.5px;color:var(--text-light)">${esc(r.verified_note)}</p>` : ""}
         <div class="verify-row">
           <span class="verify-lbl">Verify on:</span>
           ${vl.re3data    ? `<a href="${esc(vl.re3data)}"    target="_blank" class="vlink">re3data ↗</a>` : ""}

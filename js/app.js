@@ -91,7 +91,7 @@ window.copyToClipboard = function(text, el) {
   const MAX_HIST = 20;
   const API_BASE_CHAT = "https://mohithnikesh-researchpilot.hf.space";
 
-  const WELCOME = "👋 Hi! I'm ResearchPilot — your AI publishing assistant for UW-Madison researchers.\n\nYou can go directly to the tabs above to find journals, check self-archiving rights, or find a data repository — or ask me anything here and I'll guide you.";
+  const WELCOME = "👋 Hi! I'm the ResearchPilot Assistant — publishing and open access help for UW-Madison researchers.\n\nUse the tabs above to find journals, check self-archiving rights, or find a data repository — or ask me anything here and I'll guide you.";
 
   const EXAMPLE_CHIPS = [
     "Find me a journal",
@@ -100,9 +100,9 @@ window.copyToClipboard = function(text, el) {
   ];
 
   const TAB_META = {
-    journals: { emoji: "📰", label: "Open Journal Submission tool", color: "#1a2744" },
-    license:  { emoji: "🛡️", label: "Open License Checker",         color: "#059669" },
-    data:     { emoji: "🗄️", label: "Open Data Repository tool",    color: "#d97706" },
+    journals: { emoji: "📰", label: "Open Journal Submission tool", color: "#c5050c" },
+    license:  { emoji: "🛡️", label: "Open License Checker",         color: "#0d7a3f" },
+    data:     { emoji: "🗄️", label: "Open Data Repository tool",    color: "#282728" },
   };
 
   let isOpen = false, isTyping = false, history = [], welcomeShown = false, chipsShown = false;

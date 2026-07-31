@@ -136,11 +136,12 @@ function renderRepoResults(result, container) {
 
     ${renderDatasetUnderstanding(result.dataset_understanding)}
 
-    <h3 style="font-family:'DM Serif Display',serif;font-size:22px;margin:20px 0 14px"> Recommended repositories</h3>
+    <h3 style="font-family:'Red Hat Display',sans-serif;font-size:22px;margin:20px 0 14px"> Recommended repositories</h3>
     ${repos.map((r, i) => renderRepoCard(r, i)).join("")}
 
     ${renderDepositStrategy(result.deposit_strategy)}
     ${renderNextActions(result.next_actions, result.global_notes)}
+    ${result.registry_note ? `<p class="global-note">${esc(result.registry_note)}</p>` : ""}
   `;
 
   document.getElementById("repo-reset")?.addEventListener("click", () => {

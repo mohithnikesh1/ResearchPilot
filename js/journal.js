@@ -253,6 +253,21 @@ function renderRepoRecommendation(r) {
     </div>`;
 }
 
+
+function renderMindsCardJ(m) {
+  if (!m) return "";
+  return `
+    <div class="minds-card">
+      <h3>\ud83c\udfdb\ufe0f ${esc(m.title || "Deposit to MINDS@UW")}</h3>
+      <p>${esc(m.message || "")}</p>
+      ${m.metadata_tip ? `<p class="minds-tip">${esc(m.metadata_tip)}</p>` : ""}
+      <div class="minds-links">
+        <a class="vlink" href="${esc(m.url)}" target="_blank" rel="noopener">MINDS@UW</a>
+        ${m.contact ? `<a class="vlink" href="${esc(m.contact)}" target="_blank" rel="noopener">Contact the MINDS team</a>` : ""}
+      </div>
+    </div>`;
+}
+
 function renderJournalResults(result, container) {
   const journals = result.journals || [];
   const extended = result.extended_list || [];
@@ -270,12 +285,13 @@ function renderJournalResults(result, container) {
 
     ${renderManuscriptUnderstanding(result.manuscript_understanding)}
 
-    <h3 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:16px">🏆 Top 10 best-fit journals</h3>
+    <h3 style="font-family:'Red Hat Display',sans-serif;font-size:22px;margin-bottom:16px">🏆 Top 10 best-fit journals</h3>
     ${journals.map((j, i) => renderJournalCard(j, i)).join("")}
     ${renderExtendedList(extended)}
 
     ${renderRepoRecommendation(result.repository_recommendation)}
     ${renderNextActions(result.next_actions, result.global_notes)}
+    ${renderMindsCardJ(result.minds)}
   `;
 
   // Wire export buttons
@@ -542,7 +558,7 @@ window.generateCoverLetter = async function(jName, jPub, mTitle, mAbs, mType, mD
           <p style="font-size:12px">Subject line: <strong>${esc(r.subject_line || "")}</strong> · ${r.word_count || ""} words</p>
         </div>
         <div class="card-body">
-          <pre style="white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7">${esc(r.cover_letter || "")}</pre>
+          <pre style="white-space:pre-wrap;font-family:'Red Hat Text',sans-serif;font-size:13px;line-height:1.7">${esc(r.cover_letter || "")}</pre>
           <div style="margin-top:12px;display:flex;gap:8px">
             <button class="btn btn-ghost" style="font-size:12px" onclick="downloadCoverLetter('${esc(r.cover_letter || "")}','${esc(jName)}')">⬇ Download .txt</button>
             <button class="btn btn-ghost" style="font-size:12px" onclick="navigator.clipboard.writeText(this.closest('.card').querySelector('pre').textContent).then(()=>{this.textContent='Copied!'})">📋 Copy</button>
