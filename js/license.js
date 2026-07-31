@@ -44,9 +44,9 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
     if (suggestions.length) {
       const items = suggestions.map((s, i) => {
         const icon = s.confidence === "high" ? "✓" : "~";
-        const bg   = s.confidence === "high" ? "#f0fdf4" : "#fffbeb";
-        const bc   = s.confidence === "high" ? "#6ee7b7" : "#fcd34d";
-        const tc   = s.confidence === "high" ? "var(--success)" : "#92400e";
+        const bg   = s.confidence === "high" ? "var(--success-light)" : "var(--warning-light)";
+        const bc   = s.confidence === "high" ? "var(--success-border)" : "var(--warning-border)";
+        const tc   = s.confidence === "high" ? "var(--success)" : "var(--warning)";
         return `
           <button class="lookup-suggestion-chip" data-idx="${i}" style="
             display:flex;align-items:flex-start;gap:8px;width:100%;
@@ -58,7 +58,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
           onmouseout="this.style.boxShadow='none'">
             <span style="color:${tc};font-weight:700;font-size:12px;flex-shrink:0;margin-top:1px">${icon}</span>
             <span style="flex:1;min-width:0;">
-              <span style="font-size:12.5px;font-weight:600;color:#1e293b;display:block;line-height:1.3">
+              <span style="font-size:12.5px;font-weight:600;color:var(--text);display:block;line-height:1.3">
                 ${esc(s.title)}
               </span>
               <span style="font-size:11px;color:var(--text-muted);display:flex;gap:8px;margin-top:2px;flex-wrap:wrap">
@@ -103,7 +103,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
           chipWrap.innerHTML = `
             <div style="
               display:inline-flex;align-items:center;gap:6px;
-              background:var(--success-light);border:1px solid #6ee7b7;
+              background:var(--success-light);border:1px solid var(--success-border);
               border-radius:8px;padding:4px 10px;font-size:11.5px;
               color:var(--success);font-family:'Red Hat Text',sans-serif;
             ">
@@ -122,13 +122,13 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
       const items = llmSuggestions.map((s, i) => `
         <button class="lookup-llm-chip" data-idx="${i}" style="
           display:inline-flex;align-items:center;gap:6px;
-          background:#fef3c7;border:1.5px solid #fcd34d;border-radius:20px;
-          padding:4px 12px;font-size:12px;color:#92400e;
+          background:var(--warning-light);border:1.5px solid var(--warning-border);border-radius:20px;
+          padding:4px 12px;font-size:12px;color:var(--warning);
           font-family:'Red Hat Text',sans-serif;cursor:pointer;
           font-weight:500;transition:background .15s;margin:2px;
         "
-        onmouseover="this.style.background='#fde68a'"
-        onmouseout="this.style.background='#fef3c7'">
+        onmouseover="this.style.background='var(--warning-light)'"
+        onmouseout="this.style.background='var(--warning-light)'">
           💡 ${esc(s.name)}
         </button>`).join("");
 

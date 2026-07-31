@@ -19,22 +19,36 @@ window.switchMode = switchMode;
 
 // ── Tab routing ────────────────────────────────────────────────────────────
 function activateTab(target) {
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".nav-card").forEach(b => {
+    const on = b.dataset.tab === target;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-selected", on ? "true" : "false");
+  });
   document.querySelectorAll(".tab-panel").forEach(p => {
     p.classList.remove("active");
     p.style.display = "none";
   });
-  const btn = document.querySelector(`.tab-btn[data-tab="${target}"]`);
-  if (btn) btn.classList.add("active");
   const panel = document.getElementById(`tab-${target}`);
   if (panel) { panel.classList.add("active"); panel.style.display = "block"; }
 }
 window.activateTab = activateTab;
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
+document.querySelectorAll(".nav-card").forEach(btn => {
   btn.addEventListener("click", () => activateTab(btn.dataset.tab));
 });
 activateTab("journals");
+
+// Condense the tool nav once it sticks to the top, so the single menu stays
+// reachable on long results pages without ever showing twice.
+(function initNavCondense() {
+  const nav = document.getElementById("tool-nav");
+  const sentinel = document.getElementById("nav-sentinel");
+  if (!nav || !sentinel || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(
+    ([entry]) => nav.classList.toggle("condensed", !entry.isIntersecting),
+    { threshold: 0 }
+  ).observe(sentinel);
+})();
 
 // ── Language selector ──────────────────────────────────────────────────────
 // ── Progress helpers ───────────────────────────────────────────────────────
@@ -162,18 +176,13 @@ window.copyToClipboard = function(text, el) {
   }
 
   function activateTabAndPrefill(route, prefill) {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => {
-      p.classList.remove("active"); p.style.display = "none";
-    });
-    const tabBtn = document.querySelector(`.tab-btn[data-tab="${route}"]`);
-    if (tabBtn) tabBtn.classList.add("active");
-    const tabPanel = document.getElementById(`tab-${route}`);
-    if (tabPanel) { tabPanel.classList.add("active"); tabPanel.style.display = "block"; }
+    // Single source of truth — keeps the nav card highlight in sync when the
+    // chat assistant routes the user to a tool.
+    activateTab(route);
 
     const FIELD_MAP = {
       journals: { title: "j-title", abstract: "j-abstract", keywords: "j-keywords", discipline: "j-discipline", subject: "s-subject" },
-      license:  { journal_name: "l-journal", issn: "l-issn", publisher: "l-publisher" },
+      license:  { journal_name: "l-journal", doi: "l-doi", issn: "l-issn", publisher: "l-publisher" },
       data:     { title: "r-title", discipline: "r-discipline", data_types: "r-datatypes" },
     };
     const map = FIELD_MAP[route] || {};

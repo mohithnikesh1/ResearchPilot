@@ -178,17 +178,17 @@ function renderExtendedList(list) {
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${esc(j.publisher || "")}</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px">${esc(j.fit_reason || "")}</div>
         </td>
-        <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${esc(j.issn || "-")}</td>
+        <td style="font-family:var(--font-body);font-variant-numeric:tabular-nums;font-size:12px">${esc(j.issn || "-")}</td>
         <td>${qBadge} ${oaBadge}</td>
         <td style="font-size:12px;color:var(--text-muted)">${j.h_index || "-"}</td>
         <td>
           <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px">
             ${vl.scopus       ? `<a href="${esc(vl.scopus)}"       target="_blank" class="el el-scopus">Scopus</a>` : ""}
             ${vl.sherpa_romeo ? `<a href="${esc(vl.sherpa_romeo)}" target="_blank" class="el el-sherpa">Open Policy Finder</a>` : ""}
-            ${j.uw_apc_covered ? `<a href="${uwLink}" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC may apply</a>` : ""}
+            ${j.uw_apc_covered ? `<a href="${uwLink}" target="_blank" class="el el-apc">🎓 UW APC may apply</a>` : ""}
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <button class="el" style="background:#d1fae5;color:#065f46;cursor:pointer;border:none"
+            <button class="el" style="background:var(--success-light);color:var(--success);cursor:pointer;border:none"
               onclick="analyseFullyFromSubject('${safe(j.name)}','${safe(j.issn || "")}')">
               Analyse fully
             </button>
@@ -373,6 +373,17 @@ function resetSubject() {
   document.getElementById("subject-form")?.reset();
 }
 
+// Clicking a "did you mean" chip re-runs the search with that exact
+// SCImago category, so the user can redirect a wrong guess in one click.
+window.rerunSubjectSearch = function (categoryName) {
+  const input = document.getElementById("s-subject");
+  if (!input) return;
+  input.value = categoryName;
+  const form = document.getElementById("subject-form");
+  if (form) form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true }));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 function renderSubjectResults(result, container) {
   const journals = result.journals || [];
 
@@ -389,10 +400,31 @@ function renderSubjectResults(result, container) {
     return;
   }
 
-  const banner = result.user_message
+  // What the tool actually searched, stated plainly — plus one-click
+  // alternates when the mapping might not be what the user meant.
+  const correction = result.spelling_correction && result.spelling_correction.trim();
+  const correctionLine = correction
+    ? `<div><strong>Corrected to "${esc(correction)}"</strong>${result.user_message ? " — " + esc(result.user_message) : ""}</div>`
+    : (result.user_message ? `<div>${esc(result.user_message)}</div>` : "");
+
+  const mappingLine = result.mapping_note
+    ? `<div class="subj-mapping">${esc(result.mapping_note)}</div>` : "";
+
+  const alts = result.alternates || [];
+  const altLine = alts.length
+    ? `<div class="subj-alts">
+         <span class="subj-alts-label">Did you mean:</span>
+         ${alts.map(a => `<button type="button" class="lookup-suggestion-chip"
+             onclick="rerunSubjectSearch('${esc(a.name).replace(/'/g, "\\'")}')">
+             ${esc(a.name)}${a.area ? ` <span style="color:var(--text-light)">· ${esc(a.area)}</span>` : ""}
+           </button>`).join("")}
+       </div>`
+    : "";
+
+  const banner = (correctionLine || mappingLine || altLine)
     ? `<div class="subj-banner">
-         <span class="subj-banner-icon">${result.confidence === "near" ? "Corrected:" : "Note:"}</span>
-         ${esc(result.user_message)}
+         <span class="subj-banner-icon" aria-hidden="true">${correction ? "\u270E" : "\u2139"}</span>
+         <div class="subj-banner-body">${correctionLine}${mappingLine}${altLine}</div>
        </div>`
     : "";
 
@@ -409,29 +441,29 @@ function renderSubjectResults(result, container) {
       : "";
     return `
       <tr id="row-${uid}">
-        <td style="color:var(--text-muted);font-size:12px;font-family:'JetBrains Mono',monospace">${startIdx + i + 1}</td>
+        <td style="color:var(--text-muted);font-size:12px;font-family:var(--font-body);font-variant-numeric:tabular-nums">${startIdx + i + 1}</td>
         <td>
           <strong style="font-size:13px">${esc(j.name)}</strong>
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${esc(j.publisher || "")}</div>
         </td>
-        <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${esc(j.issn || "-")}</td>
+        <td style="font-family:var(--font-body);font-variant-numeric:tabular-nums;font-size:12px">${esc(j.issn || "-")}</td>
         <td>${qBadge} ${oaBadge}</td>
-        <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${j.h_index || "-"}</td>
+        <td style="font-family:var(--font-body);font-variant-numeric:tabular-nums;font-size:12px">${j.h_index || "-"}</td>
         <td>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
             ${vl.scimago        ? `<a href="${esc(vl.scimago)}"        target="_blank" class="el el-scopus">SCImago</a>` : ""}
             ${vl.sherpa_romeo   ? `<a href="${esc(vl.sherpa_romeo)}"   target="_blank" class="el el-sherpa">Open Policy Finder</a>` : ""}
-            ${vl.doaj           ? `<a href="${esc(vl.doaj)}"           target="_blank" class="el" style="background:#fef3c7;color:#92400e">DOAJ</a>` : ""}
-            ${vl.scopus_sources ? `<a href="${esc(vl.scopus_sources)}" target="_blank" class="el" style="background:#e0e7ff;color:#3730a3">Scopus</a>` : ""}
+            ${vl.doaj           ? `<a href="${esc(vl.doaj)}"           target="_blank" class="el el-doaj">DOAJ</a>` : ""}
+            ${vl.scopus_sources ? `<a href="${esc(vl.scopus_sources)}" target="_blank" class="el el-scopus">Scopus</a>` : ""}
             ${vl.issn_display   ? `<span class="copy-chip copy-chip-sm" onclick="copyToClipboard('${esc(vl.issn_display)}',this)" title="Copy ISSN">${esc(vl.issn_display)} 📋</span>` : ""}
-            ${j.uw_apc_covered  ? `<a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" class="el" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">🎓 UW APC may apply</a>` : ""}
+            ${j.uw_apc_covered  ? `<a href="https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support" target="_blank" class="el el-apc">🎓 UW APC may apply</a>` : ""}
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="el" style="background:#e0e7ff;color:#3730a3;cursor:pointer;border:none"
+            <button class="el el-action"
               onclick="showSubjectCoverLetterForm('${uid}','${safe(j.name)}','${safe(j.publisher)}',this)">
               Cover letter
             </button>
-            <button class="el" style="background:#d1fae5;color:#065f46;cursor:pointer;border:none"
+            <button class="el" style="background:var(--success-light);color:var(--success);cursor:pointer;border:none"
               onclick="analyseFullyFromSubject('${safe(j.name)}','${safe(j.issn || "")}')">
               Analyse fully
             </button>
@@ -439,7 +471,7 @@ function renderSubjectResults(result, container) {
         </td>
       </tr>
       <tr id="clform-${uid}" style="display:none">
-        <td colspan="6" style="padding:12px 14px;background:#f8f9fc;border-top:none">
+        <td colspan="6" style="padding:12px 14px;background:var(--bg-subtle);border-top:none">
           <div class="subj-cl-form">
             <p style="font-size:13px;font-weight:600;margin-bottom:10px">
               Generate cover letter for <em>${esc(j.name)}</em>
