@@ -6,7 +6,7 @@ Upload this file as index.html to the GitHub Pages publishing directory.
 Styles, JavaScript, logo and favicon are embedded. The interface is English-only.
 Edit apiBase in RESEARCHPILOT_CONFIG below to change the Hugging Face backend.
 Keep all API keys and secrets in Hugging Face Space settings.
-The existing ResearchPilot 3.0.0 backend is still required.
+Use the matching ResearchPilot 3.0.0 backend with the September 20 publication-link update.
 
 MIT License
 
@@ -2203,6 +2203,50 @@ background: #fff1f1;
   #researchpilot-app .rb-service-intro { transition: none; }
 }
 
+/* Publisher and repository destinations stay visible before details expand. */
+#researchpilot-app .rp-result-title-link {
+  color: inherit; text-decoration: underline; text-decoration-color: #c8c2b8;
+  text-underline-offset: .19em; text-decoration-thickness: 1px;
+}
+#researchpilot-app .rp-result-title-link:hover { color: var(--primary); text-decoration-color: currentColor; }
+#researchpilot-app .rp-result-title-link span { font-size: .7em; white-space: nowrap; }
+#researchpilot-app .rp-journal-links { margin: 0 0 17px; padding: 13px 15px; border: 1px solid #e3ddd3; border-radius: 10px; background: #faf8f2; }
+#researchpilot-app .rp-resource-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+#researchpilot-app .r-card .j-header > .rp-resource-actions { margin: 12px 0 2px; }
+#researchpilot-app .rp-resource-link {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 38px; padding: 8px 12px; border: 1px solid #b9c2ca; border-radius: 6px;
+  background: #fff; color: #183247; font: 600 12px/1.35 system-ui, sans-serif;
+  text-decoration: none; cursor: pointer; text-align: center;
+}
+#researchpilot-app .rp-resource-link:hover { background: #edf1f4; border-color: #183247; }
+#researchpilot-app .rp-resource-primary { background: #183247; color: #fff; border-color: #183247; }
+#researchpilot-app .rp-resource-primary:hover { background: #27465d; color: #fff; }
+#researchpilot-app .rp-resource-link:disabled { cursor: wait; opacity: .7; }
+#researchpilot-app .rp-resource-link:focus-visible,
+#researchpilot-app .rp-result-title-link:focus-visible,
+#researchpilot-app .rp-category-link:focus-visible,
+#researchpilot-app .rp-quartile-link:focus-visible { outline: 3px solid #bd3340; outline-offset: 3px; }
+#researchpilot-app .rp-link-provenance { display: block; margin-top: 7px; color: #566573; font-size: 10.5px; line-height: 1.5; font-weight: 400; overflow-wrap: anywhere; }
+#researchpilot-app .rp-link-status { margin-top: 7px; color: #566573; font-size: 12px; line-height: 1.5; font-weight: 400; }
+#researchpilot-app .rp-links-compact { padding: 8px 0; margin: 2px 0; border: 0; border-radius: 0; background: transparent; }
+#researchpilot-app .rp-links-compact .rp-resource-link { font-size: 10.5px; min-height: 32px; padding: 6px 8px; }
+#researchpilot-app .rp-links-compact .rp-link-provenance { font-size: 10px; }
+#researchpilot-app .rp-category-link { color: #244b65; text-decoration: underline; text-underline-offset: .18em; }
+#researchpilot-app .rp-category-link:hover { color: var(--primary); }
+#researchpilot-app .rp-quartile-link { display: inline-flex; text-decoration: none; flex-shrink: 0; }
+#researchpilot-app .rp-quartile-link .badge { text-decoration: underline; text-underline-offset: .14em; }
+#researchpilot-app .rp-matched-subjects { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+#researchpilot-app .fq-chip { max-width: 100%; }
+#researchpilot-app .fq-field { overflow-wrap: anywhere; }
+#researchpilot-app .subj-card .rp-resource-actions { margin-bottom: 10px; }
+#researchpilot-app .rec-item .rp-resource-actions { margin-top: 8px; }
+@media (max-width: 480px) {
+  #researchpilot-app .rp-journal-links { padding: 11px; }
+  #researchpilot-app .rp-resource-link { flex: 1 1 140px; }
+  #researchpilot-app .rp-links-compact { padding: 8px 0; }
+}
+
 #researchpilot-app .rb-advanced {
   margin-top: 18px; border: 1px solid var(--border); border-radius: 12px;
   background: #fbfcff; overflow: hidden;
@@ -3350,6 +3394,134 @@ function safeHttpsUrl(value, allowedHosts = []) {
   }
 }
 
+// The backend supplies identity-matched metadata or curated publisher links.
+// Looking up missing author instructions is an explicit, bounded action.
+const RB_JOURNAL_LINK_ITEMS = new Map();
+const RB_JOURNAL_LINK_CACHE = new Map();
+function rbJournalSourceId(journal) {
+  const id = String(journal?.scopus_id || journal?.id || "").trim();
+  return /^\d{1,16}$/.test(id) ? id : "";
+}
+function rbJournalLinkKey(journal) {
+  return rbJournalSourceId(journal) || `name:${journal?.issn || journal?.name || "journal"}`;
+}
+function rbJournalLinks(journal) {
+  return RB_JOURNAL_LINK_CACHE.get(rbJournalLinkKey(journal)) || journal?.links || {};
+}
+function rbJournalLinkUrl(journal, kind) {
+  const entry = rbJournalLinks(journal)[kind];
+  const accepted = (kind === "homepage" ? ["verified", "metadata", "curated"] : ["verified", "curated"]).includes(entry?.status);
+  const direct = accepted ? safeHttpsUrl(entry.url) : "";
+  return direct || (kind === "homepage" ? safeHttpsUrl(journal?.openalex?.homepage_url) : "");
+}
+function rbJournalTitleContent(journal) {
+  const url = rbJournalLinkUrl(journal, "homepage");
+  return url ? `<a class="rp-result-title-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="Open journal website">${esc(journal.name)} <span aria-hidden="true">↗</span></a>` : esc(journal.name);
+}
+function rbJournalTitle(journal) {
+  const key = rbJournalLinkKey(journal);
+  RB_JOURNAL_LINK_ITEMS.set(key, journal);
+  return `<span data-journal-title-key="${esc(key)}">${rbJournalTitleContent(journal)}</span>`;
+}
+function rbLinkProvenance(entry, fallback = "") {
+  const date = /^\d{4}-\d{2}-\d{2}/.test(String(entry?.checked_at || "")) ? String(entry.checked_at).slice(0, 10) : "";
+  const source = entry?.source || fallback;
+  const action = entry?.status === "curated" ? "Reviewed" : entry?.status === "verified" ? "Checked" : "Retrieved";
+  return [source, date ? `${action} ${date}` : ""].filter(Boolean).join(" · ");
+}
+function rbRenderJournalLinks(journal, compact = false) {
+  const key = rbJournalLinkKey(journal);
+  RB_JOURNAL_LINK_ITEMS.set(key, journal);
+  const links = rbJournalLinks(journal);
+  const homepage = rbJournalLinkUrl(journal, "homepage");
+  const guidelines = rbJournalLinkUrl(journal, "author_guidelines");
+  const guidanceLabel = links.author_guidelines?.scope === "publisher" ? "Publisher author guidance" : "Author guidelines";
+  const loading = journal._linksLoading === true;
+  const lookedUp = RB_JOURNAL_LINK_CACHE.has(key);
+  const status = journal._linksError || (lookedUp && !guidelines
+    ? (homepage ? "Author guidelines not found — visit journal website." : "Publisher links could not be verified. Use the source records below.")
+    : "");
+  const notes = [
+    homepage ? `Website: ${rbLinkProvenance(links.homepage, "OpenAlex metadata")}` : "",
+    guidelines ? `${guidanceLabel}: ${rbLinkProvenance(links.author_guidelines)}` : "",
+  ].filter(Boolean);
+  return `<div class="rp-journal-links${compact ? " rp-links-compact" : ""}" data-journal-links-key="${esc(key)}" aria-label="Journal website and author guidelines">
+    <div class="rp-resource-actions">
+      ${homepage ? `<a class="rp-resource-link rp-resource-primary" href="${esc(homepage)}" target="_blank" rel="noopener noreferrer">Journal website <span aria-hidden="true">↗</span></a>` : ""}
+      ${guidelines ? `<a class="rp-resource-link" href="${esc(guidelines)}" target="_blank" rel="noopener noreferrer">${guidanceLabel} <span aria-hidden="true">↗</span></a>` : ""}
+      ${!guidelines && rbJournalSourceId(journal) ? `<button type="button" class="rp-resource-link rp-find-guidelines" data-journal-links-lookup="${esc(key)}" ${loading ? "disabled aria-busy=\"true\"" : ""}>${loading ? "Finding publisher links…" : lookedUp ? "Check publisher links again" : "Find author guidelines"}</button>` : ""}
+    </div>
+    ${notes.length ? `<p class="rp-link-provenance">${notes.map(esc).join("<br>")}</p>` : ""}
+    ${guidelines && links.author_guidelines?.scope === "publisher" ? `<p class="rp-link-provenance">Publisher-wide guidance. Check the journal website for title-specific requirements.</p>` : ""}
+    ${status ? `<p class="rp-link-status" role="status">${esc(status)}</p>` : ""}
+    ${!homepage && !guidelines && !rbJournalSourceId(journal) ? `<p class="rp-link-status">Journal website not available in the matched source record.</p>` : ""}
+  </div>`;
+}
+function rbRefreshJournalLinks(key) {
+  const journal = RB_JOURNAL_LINK_ITEMS.get(key);
+  if (!journal) return;
+  RB_ROOT.querySelectorAll("[data-journal-links-key]").forEach(host => {
+    if (host.dataset.journalLinksKey === key) host.outerHTML = rbRenderJournalLinks(journal, host.classList.contains("rp-links-compact"));
+  });
+  RB_ROOT.querySelectorAll("[data-journal-title-key]").forEach(host => {
+    if (host.dataset.journalTitleKey === key) host.innerHTML = rbJournalTitleContent(journal);
+  });
+}
+async function rbFindJournalLinks(key) {
+  const journal = RB_JOURNAL_LINK_ITEMS.get(key);
+  const id = rbJournalSourceId(journal);
+  if (!id || journal?._linksLoading) return;
+  journal._linksLoading = true;
+  journal._linksError = "";
+  rbRefreshJournalLinks(key);
+  try {
+    const response = await rbFetchJson(`${RB_API_BASE}/api/journal-links?scopus_id=${encodeURIComponent(id)}`, {}, {requestKey: `journal-links:${id}`, timeoutMs: 20000});
+    const result = response?.result;
+    if (!result || String(result.journal_id) !== id || !result.links || typeof result.links !== "object") throw new Error("The publisher links could not be matched to this journal.");
+    RB_JOURNAL_LINK_CACHE.set(key, result.links);
+    journal.links = result.links;
+  } catch (error) {
+    if (rbStaleRequest(error)) return;
+    journal._linksError = "Publisher links are unavailable right now. Visit the journal website or try again later.";
+  } finally {
+    journal._linksLoading = false;
+    rbRefreshJournalLinks(key);
+  }
+}
+function rbInitialiseJournalLinks() {
+  RB_ROOT.addEventListener("click", event => {
+    const button = event.target.closest?.("[data-journal-links-lookup]");
+    if (button) rbFindJournalLinks(button.dataset.journalLinksLookup);
+  });
+}
+function rbLinkedQuartile(quartile, profileUrl) {
+  const badge = quartileBadge(quartile);
+  const url = safeHttpsUrl(profileUrl, ["scimagojr.com"]);
+  if (!badge || !url || !/^Q[1-4]$/.test(quartile)) return badge;
+  const profile = new URL(url);
+  if (!profile.pathname.endsWith("/journalsearch.php") || profile.searchParams.get("tip") !== "sid" || !/^[1-9]\d{0,19}$/.test(profile.searchParams.get("q") || "")) return badge;
+  return `<a href="${esc(url)}" class="rp-quartile-link" target="_blank" rel="noopener noreferrer" title="Verify ${esc(quartile)} on the journal’s SCImago profile">${badge}</a>`;
+}
+function rbSubjectLink(row) {
+  const supplied = safeHttpsUrl(row?.category_url, ["scimagojr.com"]);
+  const code = String(row?.code || row?.asjc || "");
+  const year = /^20\d{2}$/.test(String(row?.year || "")) ? String(row.year) : "2025";
+  const url = supplied || (/^\d{4}$/.test(code) ? `https://www.scimagojr.com/journalrank.php?category=${code}&year=${year}` : "");
+  const name = esc(row?.field || "Subject not recorded");
+  return url ? `<a class="rp-category-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="View SCImago category rankings · ${year}">${name}</a>` : name;
+}
+function rbSubjectQuartileRow(row, journal = {}) {
+  return `<span class="fq-chip">${rbLinkedQuartile(row.quartile, row.quartile_url || journal.verify_links?.scimago_profile || journal.verify_links?.scimago) || `<span class="badge b-muted">Not available</span>`}<span class="fq-field">${rbSubjectLink(row)}</span></span>`;
+}
+function rbRepositoryName(repository) {
+  const url = safeHttpsUrl(repository?.url);
+  return url ? `<a class="rp-result-title-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(repository.name)} <span aria-hidden="true">↗</span></a>` : esc(repository?.name);
+}
+function rbRepositoryVisit(repository) {
+  const url = safeHttpsUrl(repository?.url);
+  return url ? `<div class="rp-resource-actions"><a class="rp-resource-link rp-resource-primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Visit repository <span aria-hidden="true">↗</span></a></div>` : "";
+}
+
 function makeExternalLink(url, label, allowedHosts = []) {
   const safeUrl = safeHttpsUrl(url, allowedHosts);
   if (!safeUrl) return null;
@@ -3456,8 +3628,8 @@ function renderVersionBlock(title, v) {
 function renderVerifyLinks(vl, showScopusPrimary = true) {
   if (!vl) return "";
   const values = showScopusPrimary
-    ? [["Scopus", vl.scopus], ["Open Policy Finder", vl.sherpa_romeo], ["DOAJ", vl.doaj], ["OpenAlex", vl.openalex]]
-    : [["Open Policy Finder", vl.sherpa_romeo], ["Scopus", vl.scopus], ["DOAJ", vl.doaj], ["OpenAlex", vl.openalex]];
+    ? [["Scopus", vl.scopus], ["SCImago SJR", vl.scimago], ["Open Policy Finder", vl.sherpa_romeo], ["DOAJ", vl.doaj], ["OpenAlex", vl.openalex]]
+    : [["Open Policy Finder", vl.sherpa_romeo], ["SCImago SJR", vl.scimago], ["Scopus", vl.scopus], ["DOAJ", vl.doaj], ["OpenAlex", vl.openalex]];
   const links = values.map(([label, value]) => [label, safeHttpsUrl(value)]).filter(([, url]) => url);
   if (!links.length) return "";
   return `<div class="verify-row"><span class="verify-lbl">${esc(rbText("Verify on:"))}</span>${links.map(([label, url]) => `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="vlink ${label === "Scopus" && showScopusPrimary ? "vlink-scopus" : ""}">${esc(label)}</a>`).join("")}</div>`;
@@ -3523,20 +3695,17 @@ function diamondBadge(j) {
     : "";
 }
 
-/* Show the spread only when there is a spread to show. For a single-field
-   journal the headline quartile already says everything, and a block that
-   repeats it is noise on the common case. */
-function renderFieldQuartiles(byField) {
-  if (!Array.isArray(byField) || byField.length < 2) return "";
-  const chips = byField.map(f => `
-        <span class="fq-chip">${quartileBadge(f.quartile) || `<span class="badge b-muted">-</span>`}<span class="fq-field">${esc(f.field)}</span></span>`).join("");
-  return `
-      <div class="fq-block">
-        <div class="fq-label">Quartile by subject area</div>
-        <div class="fq-chips">${chips}
-        </div>
-        <p class="fq-note">The headline quartile above is this journal's best across its subject areas. Use the row that matches your paper's field.</p>
-      </div>`;
+/* Display every recorded field, including a single field; missing quartiles
+   remain unranked and are never replaced with the journal's best quartile. */
+function renderFieldQuartiles(byField, journal = {}) {
+  const rows = Array.isArray(byField) ? byField.filter(row => row && row.field) : [];
+  if (!rows.length) return "";
+  const years = [...new Set(rows.map(row => row.year || journal.ranking?.year || "2025"))];
+  return `<div class="fq-block">
+    <div class="fq-label">Quartile by subject area · SCImago SJR · ${years.map(esc).join(", ")}</div>
+    <div class="fq-chips">${rows.map(row => rbSubjectQuartileRow(row, journal)).join("")}</div>
+    <p class="fq-note">Category names open the rankings list; linked Q badges open this journal's SCImago profile. These are SJR quartiles, not Scopus CiteScore quartiles.</p>
+  </div>`;
 }
 
 /* A journal too new for an SJR is a timing artefact and safe to submit to; a
@@ -3622,13 +3791,13 @@ function renderRankingBlock(r, j) {
       <dl class="rank-grid">
         <div class="rank-item"><dt>Source</dt><dd>${esc(r.source || "-")}</dd></div>
         <div class="rank-item"><dt>Year</dt><dd>${esc(r.year || "-")}</dd></div>
-        <div class="rank-item"><dt>Quartile</dt><dd>${r.quartile ? `<span class="badge ${RB_Q_CLASS[r.quartile] || "b-muted"}">${esc(r.quartile)}</span>` : "-"}</dd></div>
+        <div class="rank-item"><dt>Quartile</dt><dd>${rbLinkedQuartile(r.quartile, host.verify_links?.scimago) || "-"}</dd></div>
         ${r.percentile ? `<div class="rank-item"><dt>Rank/Percentile</dt><dd>${esc(r.percentile)}</dd></div>` : ""}
         ${f.sjr != null ? `<div class="rank-item"><dt>SJR</dt><dd>${esc(String(f.sjr))}</dd></div>` : ""}
         ${r.category   ? `<div class="rank-item"><dt>Category</dt><dd style="font-size:11px">${esc(r.category)}</dd></div>` : ""}
         ${r.h_index    ? `<div class="rank-item"><dt>h-index</dt><dd>${esc(r.h_index)}</dd></div>` : ""}
       </dl>
-      ${renderFieldQuartiles(f.byField)}
+      ${renderFieldQuartiles(f.byField, host)}
       ${r.interpretation ? `<p class="rank-note">${esc(r.interpretation)}</p>` : ""}
       ${r.verification_status ? `<p class="rank-verify"><strong>Verification:</strong> ${esc(r.verification_status)}</p>` : ""}${renderIndexProvenance(host)}
     </div>`;
@@ -3642,7 +3811,7 @@ function renderMindsCard(k, mode = "article") {
       <div class="minds-head">
         <span style="font-size:22px">🏛️</span>
         <div>
-          <h3>UW–Madison repository &mdash; MINDS@UW</h3>
+          <h3>${rbRepositoryName({name: "UW–Madison repository — MINDS@UW", url: k.url || "https://minds.wisconsin.edu/"})}</h3>
           <div style="font-size:12px;opacity:.8">minds.wisconsin.edu</div>
         </div>
       </div>
@@ -3728,10 +3897,8 @@ function renderRepoCard(r, idx) {
     <div class="card j-card r-card ${isMinds ? "is-minds" : ""}">
       <div class="j-header">
         <div class="j-meta">#${idx + 1} · ${esc(r.type)} · ${esc(r.cost)}${isMinds ? " · UW–Madison Institutional" : ""}</div>
-        <div class="j-title">
-          ${esc(r.name)}
-          ${r.url ? `<a href="${esc(safeHttpsUrl(r.url))}" target="_blank" rel="noopener noreferrer" style="font-size:14px;font-family:system-ui,sans-serif;font-weight:400;color:var(--primary);margin-left:8px">↗ visit</a>` : ""}
-        </div>
+        <div class="j-title">${rbRepositoryName(r)}</div>
+        ${rbRepositoryVisit(r)}
         <div class="badge-row">
           ${confidence ? confidenceBadge(confidence) : ""}
           ${r.access_model ? accessBadge(r.access_model) : ""}
@@ -4357,8 +4524,9 @@ function renderSubjectRepositories(repos) {
           ${repos.map(r => `
             <div class="subj-card">
               <div class="subj-head">
-                <a href="${esc(safeHttpsUrl(r.url))}" target="_blank" rel="noopener">${esc(r.name)}</a>
+                ${rbRepositoryName(r)}
               </div>
+              ${rbRepositoryVisit(r)}
               <p class="subj-scope">${esc(r.scope)}</p>
               <dl class="subj-meta">
                 <div><dt>Versions</dt><dd>${esc(r.versions)}</dd></div>
@@ -4511,7 +4679,7 @@ function renderJournalCard(j, idx) {
          data-qraw="${esc(_q)}">
       <div class="j-header">
         <div class="j-meta">#${idx + 1} · ${esc(j.publisher || "")}${j.issn ? ` · ISSN ${esc(j.issn)}` : ""}</div>
-        <div class="j-title">${esc(j.name)}</div>
+        <div class="j-title">${rbJournalTitle(j)}</div>
         <div class="badge-row">
           ${confidenceBadge(j.confidence)}
           ${j.ranking?.quartile ? quartileBadge(j.ranking.quartile) : ""}
@@ -4520,6 +4688,7 @@ function renderJournalCard(j, idx) {
         </div>
       </div>
       <div class="j-body">
+        ${rbRenderJournalLinks(j)}
         ${renderIndexationNotice(j)}
         ${j.uw_apc_covered ? `
           <div class="uw-apc-note">
@@ -4574,12 +4743,13 @@ function renderExtendedList(list) {
     return `
       <tr data-warn="${xf.warn ? 1 : 0}">
         <td>${i + 6}</td>
-        <td><strong>${esc(j.name)}</strong>${xf.diamond ? `<span class="ext-diamond" title="Diamond OA — no APC for authors, no subscription for readers.">◆ Diamond</span>` : ""}<br><span style="font-size:12px;color:var(--text-muted)">${esc(j.publisher || "")}</span></td>
+        <td><strong>${rbJournalTitle(j)}</strong>${xf.diamond ? `<span class="ext-diamond" title="Diamond OA — no APC for authors, no subscription for readers.">◆ Diamond</span>` : ""}<br><span style="font-size:12px;color:var(--text-muted)">${esc(j.publisher || "")}</span></td>
         <td style="font-family:ui-monospace,monospace;font-size:12px">${esc(j.issn || "-")}</td>
         <td>${q ? quartileBadge(q) : (flag ? "" : '<span style="color:var(--text-light);font-size:12px">-</span>')}${flag}</td>
         <td style="font-size:12px;color:var(--text-muted)">${esc(j.fit_reason || "")}</td>
         <td>
           <div class="ext-links">
+            ${rbRenderJournalLinks(j, true)}
             ${vl.scopus      ? `<a href="${esc(safeHttpsUrl(vl.scopus))}"        target="_blank" rel="noopener noreferrer" class="el el-scopus">Scopus</a>` : ""}
             ${vl.sherpa_romeo? `<a href="${esc(safeHttpsUrl(vl.sherpa_romeo))}"  target="_blank" rel="noopener noreferrer" class="el el-sherpa">Open Policy Finder</a>` : ""}
             ${j.uw_apc_covered ? `
@@ -4759,15 +4929,11 @@ function renderSubjectQuartileCell(journal) {
     : [];
   if (!fields.length) return `<div class="subject-q-summary">${primary} ${oaBadge}</div>`;
 
-  const rows = fields.map(item => `
-    <div class="subject-q-item">
-      ${quartileBadge(item.quartile) || '<span class="badge b-muted">-</span>'}
-      <span class="subject-q-name">${esc(item.field)}</span>
-    </div>`).join("");
+  const rows = fields.map(item => `<div class="subject-q-item">${rbSubjectQuartileRow(item, journal)}</div>`).join("");
   return `
     <div class="subject-q-summary">${primary} ${oaBadge}</div>
     <details class="subject-q-details">
-      <summary>${fields.length} subject field${fields.length === 1 ? "" : "s"}</summary>
+      <summary>${fields.length} subject field${fields.length === 1 ? "" : "s"} · SCImago SJR · ${esc(journal.ranking?.year || "2025")}</summary>
       <div class="subject-q-list">${rows}</div>
     </details>`;
 }
@@ -4864,7 +5030,7 @@ function renderSubjectResults(result, container) {
           data-oa="${oaRank}" data-qraw="${esc(quartile)}" ${quartile === "Q1" ? 'class="q1-row"' : ""}>
         <td style="color:var(--text-muted);font-size:12px;font-family:ui-monospace,monospace">${index + 1}</td>
         <td>
-          <strong style="font-size:13px">${esc(journal.name)}</strong>
+          <strong style="font-size:13px">${rbJournalTitle(journal)}</strong>${rbRenderJournalLinks(journal, true)}
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${esc(journal.publisher || "")}</div>
         </td>
         <td style="font-family:ui-monospace,monospace;font-size:12px">${esc(journal.issn || "-")}</td>
@@ -5445,19 +5611,21 @@ function renderPolicyCard(j, sourceMode, result) {
     sherpa_romeo: vl.sherpa_romeo,
     doaj:         vl.doaj,
     scopus:       vl.scopus,
+    scimago:      vl.scimago,
     openalex:     vl.openalex,
   };
   return `
     <div class="card j-card">
       <div class="j-header">
         <div class="j-meta">${esc(j.publisher || "")}${j.issn ? ` · ISSN ${esc(j.issn)}` : ""}</div>
-        <div class="j-title">${esc(j.name)}</div>
+        <div class="j-title">${rbJournalTitle(j)}</div>
         <div class="badge-row">
           ${provenanceBadge(oa, sourceMode)}
         </div>
       </div>
       <div class="j-body">
         <div>
+          ${rbRenderJournalLinks(j)}
           <h5 style="font-size:14px;font-weight:600;margin-bottom:10px">${policyHeading}</h5>
           ${sourceMode === "journal" && oa.policy_status !== "Confirmed" ? `
             <div class="policy-notes"><p><strong>No journal-level policy was retrieved.</strong> ${esc(result?.global_notes || "Use the linked Open Policy Finder search to check the current record.")}</p></div>` : `
@@ -5636,16 +5804,20 @@ function renderDatasetUnderstanding(d) {
       </div>
     </div>`;
 }
-function renderDepositStrategy(s) {
+function renderDepositStrategy(s, repositories = []) {
   if (!s) return "";
+  const choice = name => {
+    const repository = repositories.find(item => String(item.name || "").trim().toLowerCase() === String(name || "").trim().toLowerCase());
+    return repository ? rbRepositoryName(repository) + rbRepositoryVisit(repository) : esc(name);
+  };
   return `
     <div class="card rec-card mt-6">
       <div class="card-header"><h2> Deposit strategy</h2></div>
       <div class="card-body space-y">
         ${s.selection_status === "no_verified_destination" ? `<p class="policy-notes"><strong>${esc(rbText("No destination is verified for file deposit. Review the requirements with UW–Madison Library."))}</strong></p>` : s.selection_status === "candidates_require_review" ? `<p class="policy-notes">${esc(rbText("Candidate repositories need manual review before depositing files."))}</p>` : ""}
         <dl class="rec-grid">
-          <div class="rec-item"><dt>Primary choice</dt><dd>${esc(s.primary_choice)}</dd></div>
-          <div class="rec-item"><dt>Secondary choice</dt><dd>${esc(s.secondary_choice)}</dd></div>
+          <div class="rec-item"><dt>Primary choice</dt><dd>${choice(s.primary_choice)}</dd></div>
+          <div class="rec-item"><dt>Secondary choice</dt><dd>${choice(s.secondary_choice)}</dd></div>
           <div class="rec-item" style="grid-column:1/-1"><dt>Metadata standard</dt><dd>${esc(s.metadata_standard)}</dd></div>
         </dl>
         ${(s.minds_deposit_note || s.minds_metadata_note) ? `
@@ -5692,7 +5864,7 @@ function renderRepoResults(result, container) {
     ${renderDatasetUnderstanding(result.dataset_understanding)}
     <h3 style="font-family:Georgia,serif;font-size:22px;margin:20px 0 14px"> Recommended repositories</h3>
     ${repos.map((r, i) => renderRepoCard(r, i)).join("")}
-    ${renderDepositStrategy(result.deposit_strategy)}
+    ${renderDepositStrategy(result.deposit_strategy, repos)}
     ${rbRenderRepositoryExclusions(result.selection_exclusions)}
     ${renderNextActions(result.next_actions, result.global_notes)}
     ${renderHelpCard()}
@@ -6321,6 +6493,12 @@ function rbV18MatchedSubject(journal) {
   return withField.slice(0, 2).map(row => `${row.field}${row.quartile ? ` (${row.quartile})` : ""}`).join("; ");
 }
 
+function rbV18MatchedSubjectHtml(journal) {
+  const rows = Array.isArray(journal?.matched_subjects) ? journal.matched_subjects.filter(row => row && row.field) : [];
+  if (!rows.length) return `<span class="rp-link-provenance">Matched subject quartile not resolved.</span>`;
+  return `<div class="rp-matched-subjects">${rows.map(row => rbSubjectQuartileRow(row, journal)).join("")}</div><span class="rp-link-provenance">SCImago SJR · ${esc(journal.ranking?.year || rows[0]?.year || "2025")}</span>`;
+}
+
 function rbV18GetManuscriptData() {
   return {
     title:                 rbV18Value("j-title"),
@@ -6600,6 +6778,7 @@ function rbV18RenderVerification(journal) {
   const links = journal.verify_links || {};
   return renderVerifyLinks({
     scopus: links.scopus || links.scopus_sources,
+    scimago: links.scimago,
     sherpa_romeo: links.sherpa_romeo,
     doaj: links.doaj,
     openalex: links.openalex,
@@ -6624,7 +6803,7 @@ function rbV18RenderDetailedCard(journal, index, mode) {
       <div class="rb-fit-score" title="Explainable comparison score, not an acceptance prediction"><strong>${esc(String(journal.fit_score ?? "–"))}</strong><span>fit / 100</span></div>
       <div class="j-header">
         <div class="j-meta"><span class="rb-rank-number">#${index + 1}</span> · ${esc(journal.publisher || "Publisher not listed")}${journal.issn ? ` · ISSN ${esc(journal.issn)}` : ""}</div>
-        <div class="j-title">${esc(journal.name)}</div>
+        <div class="j-title">${rbJournalTitle(journal)}</div>
         <div class="rb-identity-row">
           ${rbV18IdentityBadge(journal)}
           ${quartile ? quartileBadge(quartile) : ""}
@@ -6634,6 +6813,7 @@ function rbV18RenderDetailedCard(journal, index, mode) {
         <label class="rb-card-select"><input class="rb-compare-checkbox" type="checkbox" data-compare-key="${esc(key)}"/> Add to comparison</label>
       </div>
       <div class="j-body">
+        ${rbRenderJournalLinks(journal)}
         ${renderIndexationNotice(journal)}
         <div class="rb-card-fit"><h5>🎯 Why it fits</h5><p>${esc(journal.fit_reason || "Verified subject and journal metadata support this match.")}</p></div>
         ${rankingNote ? `<p class="rb-card-ranking-note"><strong>Ranking source and verification:</strong> ${esc(rankingNote)}</p>` : ""}
@@ -6678,9 +6858,9 @@ function rbV18RenderExtraTable(journals) {
             const q = rbV18Quartile(journal);
             return `<tr data-key="${esc(key)}">
               <td>${index + 6}</td>
-              <td><strong>${esc(journal.name)}</strong><br><span style="font-size:11px;color:var(--text-muted)">${esc(journal.publisher || "")}${journal.issn ? ` · ${esc(journal.issn)}` : ""}</span></td>
+              <td><strong>${rbJournalTitle(journal)}</strong>${rbRenderJournalLinks(journal, true)}<br><span style="font-size:11px;color:var(--text-muted)">${esc(journal.publisher || "")}${journal.issn ? ` · ${esc(journal.issn)}` : ""}</span></td>
               <td><span class="rb-extra-score">${esc(String(journal.fit_score ?? "–"))}/100</span></td>
-              <td>${q ? quartileBadge(q) : ""}<span style="display:block;margin-top:4px;font-size:11px;color:var(--text-muted)">${esc(rbV18MatchedSubject(journal))}</span></td>
+              <td>${rbV18MatchedSubjectHtml(journal)}</td>
               <td>${rbV18AccessBadge(journal)}</td>
               <td><div class="rb-extra-actions">
                 <label style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px"><input class="rb-compare-checkbox" type="checkbox" data-compare-key="${esc(key)}"/> Compare</label>
@@ -6697,7 +6877,7 @@ function rbV18RenderExtraTable(journals) {
 function rbV18ComparisonRows(journals) {
   const rows = [
     ["Fit score", j => `${j.fit_score ?? "–"}/100`],
-    ["Relevant subject / quartile", j => rbV18MatchedSubject(j)],
+    ["Relevant subject / quartile", j => rbV18MatchedSubjectHtml(j), true],
     ["Current index status", j => j.currently_indexed === false ? "Not currently indexed" : "Active Scopus source record"],
     ["Access model", j => j.access_model?.label || "Not confirmed"],
     ["Current APC", j => j.access_model?.author_fee_status || "Unknown"],
@@ -6706,8 +6886,8 @@ function rbV18ComparisonRows(journals) {
     ["Recent article evidence", j => `${(j.similar_articles || []).length} representative article(s)${j.article_similarity_score ? ` · overlap ${j.article_similarity_score}/100` : ""}`],
     ["Key caution", j => j.warn ? (j.state_message || "Indexation warning") : (j.sharing_policy?.status === "confirmed" ? "Review policy applicability and current journal instructions" : "Sharing policy and current fee still need checking")],
   ];
-  return rows.map(([label, getter]) => `
-    <tr><td>${esc(label)}</td>${journals.map(journal => `<td>${esc(getter(journal))}</td>`).join("")}</tr>`).join("");
+  return rows.map(([label, getter, linked]) => `
+    <tr><td>${esc(label)}</td>${journals.map(journal => `<td>${linked ? getter(journal) : esc(getter(journal))}</td>`).join("")}</tr>`).join("");
 }
 
 function rbV18RenderComparison() {
@@ -6727,7 +6907,7 @@ function rbV18RenderComparison() {
       </div>
     </div>
     <div class="rb-comparison-scroll"><table class="rb-comparison-table">
-      <thead><tr><th>Criterion</th>${journals.map(journal => `<th>${esc(journal.name)}</th>`).join("")}</tr></thead>
+      <thead><tr><th>Criterion</th>${journals.map(journal => `<th>${rbJournalTitle(journal)}${rbRenderJournalLinks(journal, true)}</th>`).join("")}</tr></thead>
       <tbody>${rbV18ComparisonRows(journals)}</tbody>
     </table></div>`;
   document.getElementById("rb-export-comparison")?.addEventListener("click", rbV18ExportComparison);
@@ -6748,7 +6928,7 @@ function rbV18Csv(value) {
 function rbV18ExportComparison() {
   const journals = RB_DISCOVERY_STATE.all.filter(journal => RB_DISCOVERY_STATE.selected.has(rbV18JournalKey(journal)));
   if (!journals.length) return;
-  const headers = ["Journal", "Publisher", "ISSN", "Fit score", "Matched subject", "Quartile", "H-index", "Access model", "APC status", "UW–Madison agreement signal", "Accepted manuscript policy", "Recent evidence", "Scopus ID"];
+  const headers = ["Journal", "Publisher", "ISSN", "Fit score", "Matched subject", "Quartile", "H-index", "Access model", "APC status", "UW–Madison agreement signal", "Accepted manuscript policy", "Recent evidence", "Scopus ID", "Journal website", "Author guidelines", "SCImago profile"];
   const rows = journals.map(journal => [
     journal.name, journal.publisher, journal.issn, journal.fit_score,
     rbV18MatchedSubject(journal), rbV18Quartile(journal), rbV18HIndex(journal),
@@ -6756,6 +6936,7 @@ function rbV18ExportComparison() {
     journal.uw_apc_status, rbV18AamSummary(journal),
     `${(journal.similar_articles || []).length} article(s); overlap ${journal.article_similarity_score || 0}/100`,
     journal.scopus_id || journal.id,
+    rbJournalLinkUrl(journal, "homepage"), rbJournalLinkUrl(journal, "author_guidelines"), safeHttpsUrl(journal.verify_links?.scimago, ["scimagojr.com"]),
   ]);
   const csv = [headers, ...rows].map(row => row.map(rbV18Csv).join(",")).join("\r\n");
   const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
@@ -7277,6 +7458,8 @@ function rbClearAll() {
   RB_COVER_LETTER_PAYLOADS.clear();
   RB_RELATED_WORK_PAYLOADS.clear();
   RB_SUBJECT_JOURNAL_PAYLOADS.clear();
+  RB_JOURNAL_LINK_ITEMS.clear();
+  RB_JOURNAL_LINK_CACHE.clear();
   delete window.ResearchPilot.lastManuscript;
   ["subject", "journal", "license", "repo"].forEach(prefix => {
     document.getElementById(`${prefix}-form`)?.reset();
@@ -7385,6 +7568,7 @@ window.ResearchPilot.setRepositoryStep = rbSetRepositoryStep;
 
 // ── Init ───────────────────────────────────────────────────────────────────
 rbInitialiseAccessibility();
+rbInitialiseJournalLinks();
 journalTab();
 subjectTab();
 licenseTab();
