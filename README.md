@@ -4,7 +4,8 @@
 
 > Find the right journal. Understand your sharing rights. Give your research data a home.
 
-Live app: **https://mohithnikesh1.github.io/ResearchPilot/**
+**▶ Use it now: https://mohithnikesh1.github.io/ResearchPilot/** — no sign-in or installation needed.
+
 Backend API: **https://mohithnikesh-researchpilot.hf.space** (FastAPI on a Hugging Face Docker Space — companion backend repo)
 
 Version **3.0.0** · English-only interface · requires the matching 3.0.0 backend (`journal_discovery_v2` response schema).
@@ -47,23 +48,15 @@ window.RESEARCHPILOT_CONFIG = Object.freeze({
 
 Never put API keys or other secrets in this repository — they belong in the Hugging Face Space settings.
 
-## Run locally
+## Hosting
 
-1. Start the backend on port 7860 (see the backend repo README).
-2. Temporarily set `apiBase` to `"http://localhost:7860"`.
-3. Serve this folder and open **http://localhost:3000**:
+The site is hosted on **GitHub Pages** from the `main` branch (repository root) at https://mohithnikesh1.github.io/ResearchPilot/, and talks to the live backend at https://mohithnikesh-researchpilot.hf.space.
 
-   ```bash
-   python -m http.server 3000
-   ```
+To publish an update:
 
-The backend already allows `http://localhost:3000` and `http://127.0.0.1:3000` as browser origins. **Restore `apiBase` to the Hugging Face URL before publishing.**
-
-## Deploy
-
-1. Deploy the matching backend first and confirm `/api/health` reports `version: "3.0.0"` and `ready: true`.
-2. Publish `index.html` with GitHub Pages (deploy from `main`, root) and confirm `apiBase` points at the deployed backend.
-3. If the page is served from a different origin, add it to `RESEARCHPILOT_ALLOWED_ORIGINS` in the Space settings.
+1. Deploy any matching backend change first and confirm [`/api/health`](https://mohithnikesh-researchpilot.hf.space/api/health) reports `version: "3.0.0"` and `ready: true`.
+2. Update `index.html` on `main`; GitHub Pages republishes it automatically.
+3. If the page is ever served from a different origin, add that origin to `RESEARCHPILOT_ALLOWED_ORIGINS` in the Space settings.
 
 ## Design
 
