@@ -1,16 +1,21 @@
-MIT License
+ResearchPilot
+Copyright (c) 2026 Mohith Nikesh. All rights reserved.
 
-Copyright (c) 2026 Nikesh Narayanan
+This software, including its source code, user interface, text, graphics,
+design and documentation (the "Software"), is proprietary.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+No licence or other right is granted to use, copy, modify, merge, publish,
+distribute, sublicense, sell, host, deploy or create derivative works of the
+Software, in whole or in part, without the prior written permission of the
+copyright holder.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Being able to view the Software's source code, whether in this repository, on
+a hosting platform or in a web browser, does not grant any of these rights.
+Using the publicly hosted ResearchPilot service does not grant any rights to
+the Software itself.
+
+To request permission, contact the copyright holder through
+https://github.com/mohithnikesh1.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,3 +24,43 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-------------------------------------------------------------------------------
+Third-party material
+
+Third-party data, trademarks and services referenced by the Software (including
+SCImago, Scopus, OpenAlex, OA.Works and Jisc Open Policy Finder) remain the
+property of their respective owners and are subject to their own terms.
+
+-------------------------------------------------------------------------------
+ResearchBee notice
+
+Portions of the Software are adapted from ResearchBee, developed by
+Nikesh Narayanan and Mohith Nikesh. To the extent that any such portions were
+previously made available under the MIT License, the following notice applies
+to those portions only:
+
+  MIT License
+
+  Copyright (c) 2026 Nikesh Narayanan
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+All other parts of the Software, including all work created for ResearchPilot,
+are covered by the proprietary terms above.

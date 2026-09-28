@@ -8,7 +8,7 @@
   <a href="https://mohithnikesh1.github.io/ResearchPilot/"><img alt="Open the live app" src="https://img.shields.io/badge/Live%20app-Open%20ResearchPilot-ad1830?style=for-the-badge&logo=githubpages&logoColor=white"></a>
   <img alt="Version 3.0.0" src="https://img.shields.io/badge/version-3.0.0-192f3d?style=for-the-badge">
   <a href="https://huggingface.co/spaces/mohithnikesh/ResearchPilot"><img alt="Backend on Hugging Face Spaces" src="https://img.shields.io/badge/backend-Hugging%20Face%20Space-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black"></a>
-  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-2f6f4f?style=for-the-badge"></a>
+  <a href="LICENSE"><img alt="All rights reserved" src="https://img.shields.io/badge/licence-all%20rights%20reserved-6b7280?style=for-the-badge"></a>
 </p>
 
 <p align="center">
@@ -147,7 +147,7 @@ The live site is **one self-contained file** with no build step and no external 
 index.html                 the complete app: inline styles, configuration block,
                            application script, embedded logo and favicon
 assets/readme-banner.svg   banner used by this README
-LICENSE                    MIT licence
+LICENSE                    proprietary licence (all rights reserved)
 ```
 
 `js/`, `css/` and the other files in `assets/` are left over from the earlier multi-file version. `index.html` doesn't load them.
@@ -214,5 +214,5 @@ The site is served by **GitHub Pages** from the `main` branch (repository root) 
   <b>Built for UW–Madison researchers.</b><br>
   <a href="https://mohithnikesh1.github.io/ResearchPilot/">Open ResearchPilot →</a>
   <br><br>
-  <sub>Released under the <a href="LICENSE">MIT licence</a>. Not affiliated with or endorsed by the University of Wisconsin–Madison.</sub>
+  <sub>© 2026 Mohith Nikesh. All rights reserved. See <a href="LICENSE">LICENSE</a>.<br>Not affiliated with or endorsed by the University of Wisconsin–Madison.</sub>
 </p>
