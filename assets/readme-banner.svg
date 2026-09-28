@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="ResearchPilot — Good research. A clear next step.">
+  <title>ResearchPilot — Good research. A clear next step.</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f3a4b"/>
+      <stop offset="1" stop-color="#101d27"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ad1830" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ad1830" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.07"/>
+    </pattern>
+    <clipPath id="card"><rect width="1200" height="360" rx="24"/></clipPath>
+    <style>
+      .t { font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; }
+      .trail { stroke-dasharray: 3 11; animation: fly 2.4s linear infinite; }
+      @keyframes fly { to { stroke-dashoffset: -56; } }
+      @media (prefers-reduced-motion: reduce) { .trail { animation: none; } .mover { display: none; } }
+    </style>
+  </defs>
+
+  <g clip-path="url(#card)">
+    <rect width="1200" height="360" fill="url(#bg)"/>
+    <rect width="1200" height="360" fill="url(#dots)"/>
+    <circle cx="1120" cy="10" r="360" fill="url(#glow)"/>
+    <circle cx="80" cy="380" r="220" fill="url(#glow)" opacity="0.35"/>
+
+    <!-- Flight path under the title, with a small plane travelling along it -->
+    <path id="route" class="trail" d="M110 292 C 250 344, 520 318, 760 262" fill="none" stroke="#e4a2ac" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+    <g class="mover">
+      <path d="M12 0 L-8 -8 L-4 0 L-8 8 Z" fill="#fbf9f1"/>
+      <animateMotion dur="7s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+        <mpath href="#route"/>
+      </animateMotion>
+    </g>
+
+    <!-- Brand mark (same geometry as the site wordmark, inverted for the dark banner) -->
+    <g transform="translate(62 70) scale(2.45)">
+      <rect x="1" y="4" width="44" height="44" rx="12" fill="#fbf9f1"/>
+      <path d="m11 26 25-13-9 26-5-11-11-2Z" fill="none" stroke="#192f3d" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="m22 28 14-15" stroke="#192f3d" stroke-width="1.8"/>
+      <path d="M9 39h8" stroke="#ad1830" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- Title block -->
+    <text class="t" x="200" y="148" font-size="66" font-weight="750" letter-spacing="-1.6" fill="#fbf9f1">Research<tspan fill="#f0a9b4">Pilot</tspan></text>
+    <text class="t" x="202" y="198" font-size="27" font-weight="500" fill="#dbe3e8">Good research. A clear next step.</text>
+    <text class="t" x="203" y="238" font-size="15" font-weight="700" letter-spacing="2.4" fill="#9fb3c1">JOURNALS · SHARING RIGHTS · RESEARCH DATA</text>
+
+    <!-- Path panel, mirroring the site's "A path forward" card -->
+    <rect x="808" y="46" width="346" height="268" rx="18" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.14"/>
+    <text class="t" x="838" y="86" font-size="13" font-weight="700" letter-spacing="2.2" fill="#f0a9b4">A PATH FORWARD</text>
+
+    <text class="t" x="838" y="134" font-size="15" font-weight="700" fill="#f0a9b4">01</text>
+    <text class="t" x="878" y="134" font-size="19" font-weight="650" fill="#fbf9f1">Find your fit</text>
+    <text class="t" x="878" y="158" font-size="14" fill="#9fb3c1">Journals matched to your work.</text>
+
+    <text class="t" x="838" y="208" font-size="15" font-weight="700" fill="#f0a9b4">02</text>
+    <text class="t" x="878" y="208" font-size="19" font-weight="650" fill="#fbf9f1">Share with confidence</text>
+    <text class="t" x="878" y="232" font-size="14" fill="#9fb3c1">Versions, embargoes, permissions.</text>
+
+    <text class="t" x="838" y="282" font-size="15" font-weight="700" fill="#f0a9b4">03</text>
+    <text class="t" x="878" y="282" font-size="19" font-weight="650" fill="#fbf9f1">Make your data count</text>
+    <text class="t" x="878" y="306" font-size="14" fill="#9fb3c1">A trusted home for your dataset.</text>
+  </g>
+</svg>
