@@ -1595,7 +1595,7 @@ background: #fff1f1;
 
 /* Publisher and repository destinations stay visible before details expand. */
 #researchpilot-app .rp-result-title-link {
-  display: inline-block; padding-block: 2px;
+  display: inline-block; min-height: 24px; padding-block: 2px;
   color: inherit; text-decoration: underline; text-decoration-color: #c8c2b8;
   text-underline-offset: .19em; text-decoration-thickness: 1px;
 }
@@ -2239,6 +2239,7 @@ body { background: #f3f3f3; }
 #researchpilot-app .rp-hero h1 { max-width: 860px; margin: 0; color: var(--text); font-size: clamp(30px, 3.4vw, 42px); line-height: 1.25; }
 #researchpilot-app :is(.rp-hero h1, .rp-sources h2, .rb-journal-choices > h2, #rb-repo-intro > h2)::before { content: ""; display: block; width: 48px; height: 5px; margin-bottom: 20px; background: var(--primary); }
 #researchpilot-app .rp-hero-description { max-width: 760px; margin-top: 16px; font-size: 18px; line-height: 1.65; color: #3d3d40; }
+#researchpilot-app .rp-hero-note { max-width: 760px; margin-top: 10px; font-size: 14px; line-height: 1.5; color: var(--text-muted); }
 #researchpilot-app .tabs-bar { position: static; margin-top: 28px; background: none; border: 0; box-shadow: none; }
 #researchpilot-app .tabs-inner { display: flex; flex-wrap: wrap; gap: 12px; max-width: none; margin: 0; padding: 0; }
 #researchpilot-app .tab-btn { position: static; display: inline-flex; align-items: center; justify-content: center; min-width: 210px; min-height: 48px; margin: 0; padding: 10px 22px; border: 2px solid var(--primary); border-radius: 4px; background: var(--primary); color: #fff; font-size: 16px; font-weight: 600; line-height: 1.3; text-align: center; cursor: pointer; box-shadow: none; transition: background-color .15s ease, color .15s ease; }
@@ -2456,8 +2457,8 @@ body { background: #f3f3f3; }
 @media (prefers-reduced-motion: no-preference) {
   /* One page-load moment: the red rule draws in, the heading block settles. */
   #researchpilot-app .rp-hero h1::before { transform-origin: left center; animation: rp-rule-draw 520ms var(--rp-ease-out) 120ms backwards; }
-  #researchpilot-app .rp-hero :is(h1, .rp-hero-description, .tabs-bar) { animation: rp-enter 420ms var(--rp-ease-out) backwards; }
-  #researchpilot-app .rp-hero .rp-hero-description { animation-delay: 60ms; }
+  #researchpilot-app .rp-hero :is(h1, .rp-hero-description, .rp-hero-note, .tabs-bar) { animation: rp-enter 420ms var(--rp-ease-out) backwards; }
+  #researchpilot-app .rp-hero :is(.rp-hero-description, .rp-hero-note) { animation-delay: 60ms; }
   #researchpilot-app .rp-hero .tabs-bar { animation-delay: 120ms; }
 
   /* A screen the researcher opens settles into place. */
@@ -2522,6 +2523,7 @@ body { background: #f3f3f3; }
 <div class="rp-wrap">
 <h1 id="rb-functions-title" tabindex="-1">Publishing and research data help for UW–Madison researchers</h1>
 <p class="rp-hero-description">Find journals that suit your manuscript, check which version of a published article you may share, and choose a repository for your dataset. Each result names the source it came from.</p>
+<p class="rp-hero-note">ResearchPilot is an independent tool. It is not an official UW–Madison or UW–Madison Libraries service.</p>
 <div class="tabs-bar">
 <div class="tabs-inner" data-tour="tools">
 <button class="tab-btn" data-tab="journals" type="button" data-tour="journals">Find a journal</button>
@@ -2805,7 +2807,7 @@ body { background: #f3f3f3; }
 <span class="rb-mobile-bar-arrow">›</span>
 </button>
 <div id="rb-chat-tooltip">A little guidance for your next step.</div>
-<button aria-label="Need help? Ask ResearchPilot" id="rb-chat-launcher" data-tour="chat">
+<button aria-label="Ask ResearchPilot" id="rb-chat-launcher" data-tour="chat">
 <img alt="ResearchPilot" class="rb-launcher-icon rb-chat-mascot-icon" data-rb-mascot="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+CjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjEzIiBmaWxsPSIjMTkyZjNkIi8+CjxwYXRoIGQ9Im0xMCAyNCAyOC0xNC0xMCAyOS02LTEyLTEyLTNaIiBmaWxsPSJub25lIiBzdHJva2U9IiNmYmY5ZjEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJtMjIgMjcgMTYtMTciIHN0cm9rZT0iI2ZiZjlmMSIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik04IDM4aDkiIHN0cm9rZT0iI2U0YTJhYyIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" width="44" height="44" loading="lazy" decoding="async" />
 <span class="rb-launcher-label">
 <span class="rb-launcher-label-top">Need help?</span>
@@ -2937,6 +2939,14 @@ async function callAPI(endpoint, payload, settings = {}) {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
   }, settings);
 }
+// The model writes **bold** for emphasis; show it as <strong> built from text nodes.
+function rbAppendChatInline(fragment, text) {
+  text.split(/\*\*(.+?)\*\*/g).forEach((part, index) => {
+    if (!part) return;
+    if (index % 2) { const strong = document.createElement("strong"); strong.textContent = part; fragment.appendChild(strong); }
+    else fragment.appendChild(document.createTextNode(part));
+  });
+}
 function rbRenderChatText(container, value, streaming = false) {
   const fragment = document.createDocumentFragment();
   const lines = String(value || "").split("\n");
@@ -2945,7 +2955,7 @@ function rbRenderChatText(container, value, streaming = false) {
     const matches = line.matchAll(/https?:\/\/[^\s<>"']+/g);
     let offset = 0;
     for (const match of matches) {
-      fragment.appendChild(document.createTextNode(line.slice(offset, match.index)));
+      rbAppendChatInline(fragment, line.slice(offset, match.index));
       const safe = safeHttpsUrl(match[0]);
       if (safe) {
         const link = document.createElement("a");
@@ -2954,7 +2964,7 @@ function rbRenderChatText(container, value, streaming = false) {
       } else fragment.appendChild(document.createTextNode(match[0]));
       offset = match.index + match[0].length;
     }
-    fragment.appendChild(document.createTextNode(line.slice(offset)));
+    rbAppendChatInline(fragment, line.slice(offset));
   });
   if (streaming) { const cursor = document.createElement("span"); cursor.className = "rb-cursor"; cursor.textContent = "▌"; cursor.setAttribute("aria-hidden", "true"); fragment.appendChild(cursor); }
   container.replaceChildren(fragment);
@@ -3657,12 +3667,12 @@ function renderRelatedWorksAccordion(journal, uid) {
         <div class="rw-tabs" style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:10px" role="tablist">
           <button type="button" class="rw-tab active rb-rw-tab" id="rwtab-cited-${key}"
             data-related-id="${key}" data-rw-tab="cited" role="tab" aria-selected="true"
-            style="padding:6px 14px;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid #ad1830;color:#ad1830;font-family:system-ui,sans-serif">
+            style="padding:6px 14px;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid #ad1830;color:#ad1830;font-family:inherit">
             Highly cited
           </button>
           <button type="button" class="rw-tab rb-rw-tab" id="rwtab-chain-${key}"
             data-related-id="${key}" data-rw-tab="chain" role="tab" aria-selected="false"
-            style="padding:6px 14px;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:system-ui,sans-serif">
+            style="padding:6px 14px;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-family:inherit">
             Citation chain
           </button>
         </div>
@@ -3907,7 +3917,7 @@ window.ResearchPilot._startCitationChain = async function(uid, workId, title) {
     const back = document.createElement("button");
     back.type = "button";
     back.textContent = "Back to highly cited";
-    back.style.cssText = "font-size:12px;margin-top:6px;background:none;border:1px solid var(--border);border-radius:6px;padding:3px 10px;cursor:pointer;color:var(--text-muted);font-family:system-ui,sans-serif";
+    back.style.cssText = "font-size:12px;margin-top:6px;background:none;border:1px solid var(--border);border-radius:6px;padding:3px 10px;cursor:pointer;color:var(--text-muted);font-family:inherit";
     back.addEventListener("click", () => window.ResearchPilot._switchRwTab(uid, "cited"));
     chainPanel.replaceChildren(heading, results, back);
   } catch (_) {
@@ -3948,12 +3958,12 @@ function provenanceBadge(green, sourceMode) {
     (status === "Confirmed" || sourceMode === "journal_api");
   if (apiSourced) {
     return `<span class="prov-badge prov-api" title="Retrieved from the authenticated Jisc Open Policy Finder API; journal-level scope">
-              Verified source: Open Policy Finder API, journal level
+              Source: Open Policy Finder API, journal level
             </span>`;
   }
   if (status === "Confirmed") {
     return `<span class="prov-badge prov-verified" title="Retrieved from an article-level permission database">
-              Verified source: OA.Works Permissions, article level
+              Source: OA.Works Permissions, article level
             </span>`;
   }
   const label = sourceMode === "doi"
@@ -4180,7 +4190,7 @@ function renderGeneratedCoverLetter(container, result, journalName) {
   const body = document.createElement("div");
   body.className = "card-body";
   const pre = document.createElement("pre");
-  pre.style.cssText = "white-space:pre-wrap;font-family:system-ui,sans-serif;font-size:13px;line-height:1.7";
+  pre.style.cssText = "white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.7";
   pre.textContent = String(result.cover_letter || "");
 
   const actions = document.createElement("div");
@@ -4297,7 +4307,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
           <button type="button" class="lookup-suggestion-chip" data-idx="${i}" style="
             display:flex;align-items:flex-start;gap:8px;width:100%;
             background:#fff;border:1px solid var(--border-strong);border-radius:4px;
-            padding:7px 11px;font-family:system-ui,sans-serif;cursor:pointer;
+            padding:7px 11px;font-family:inherit;cursor:pointer;
             text-align:left;transition:box-shadow .15s;margin-bottom:4px;
           "
           >
@@ -4339,14 +4349,16 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
             <div style="
               display:inline-flex;align-items:center;gap:6px;
               background:#fff;border:1px solid var(--border-strong);
-              border-radius:4px;padding:4px 10px;font-size:13px;
-              color:var(--success);font-family:system-ui,sans-serif;
+              border-radius:4px;padding:2px 4px 2px 10px;font-size:13px;
+              color:var(--success);
             ">
               <span>Filled from <strong>${esc(s.source)}</strong></span>
               <button type="button" onclick="window.ResearchPilot.clearAutofill()" style="
+                display:inline-flex;align-items:center;justify-content:center;
+                min-width:24px;min-height:24px;padding:0;
                 background:none;border:none;cursor:pointer;color:var(--success);
-                font-size:13px;padding:0 2px;opacity:.7;line-height:1;
-              " title="Clear">×</button>
+                font-size:16px;line-height:1;
+              " aria-label="Clear the filled journal details" title="Clear"><span aria-hidden="true">×</span></button>
             </div>`;
         });
       });
@@ -4357,7 +4369,7 @@ async function runLookup(name, nameInput, issnInput, pubInput, chipWrap) {
           display:inline-flex;align-items:center;gap:6px;
           background:#fff;border:1px solid var(--border-strong);border-radius:4px;
           padding:4px 12px;font-size:14px;color:var(--text);
-          font-family:system-ui,sans-serif;cursor:pointer;
+          font-family:inherit;cursor:pointer;
           font-weight:500;transition:background .15s;margin:2px;
         ">
           ${esc(s.name)}
@@ -4748,7 +4760,7 @@ function renderRepoResults(result, container) {
       </div>
     </div>
     ${renderDatasetUnderstanding(result.dataset_understanding)}
-    <h3 style="font-family:Georgia,serif;font-size:22px;margin:20px 0 14px"> Recommended repositories</h3>
+    <h3 style="font-size:22px;margin:20px 0 14px"> Recommended repositories</h3>
     ${repos.length ? repos.map((r, i) => renderRepoCard(r, i)).join("") : `<div class="rb-no-results"><h3>No repository met every requirement</h3><p>Review the requirement checks below, or contact UW–Madison Research Data Services for an approved route.</p></div>`}
     ${renderDepositStrategy(result.deposit_strategy, repos)}
     ${rbRenderRepositoryExclusions(result.selection_exclusions)}
@@ -4950,7 +4962,7 @@ window.ResearchPilot.copyToClipboard = function(text, el) {
     {
       emoji: "", color: "#192f3d", route: "journals", prefill: {},
       title: "Find the best journal for my paper",
-      desc:  "AI-matched journals with verified metrics and cover-letter support",
+      desc:  "AI-matched journals with SCImago metrics and cover-letter support",
     },
     {
       emoji: "", color: "#059669", route: "license", prefill: {},
@@ -6070,7 +6082,7 @@ function rbV18JournalTab() {
     results.innerHTML = "";
     results.classList.remove("hidden");
     showProgress("journal-progress", [
-      "Classifying the manuscript into verified subject fields…",
+      "Classifying the manuscript into subject fields…",
       "Retrieving active journals and enforcing hard filters…",
       "Checking recent article evidence and ranking fit…",
       manuscript.sharing_requirement ? "Checking accepted-manuscript sharing for the strongest candidates…" : "Building the evidence-rich shortlist…",
@@ -6120,7 +6132,7 @@ function rbV18SubjectTab() {
     results.innerHTML = "";
     results.classList.remove("hidden");
     showProgress("subject-progress", [
-      "Mapping the subject to the verified ASJC/SCImago vocabulary…",
+      "Mapping the subject to the ASJC/SCImago categories…",
       "Retrieving active journals and enforcing hard filters…",
       "Checking recent article evidence and ranking subject relevance…",
       payload.sharing_requirement ? "Checking accepted-manuscript sharing for the strongest candidates…" : "Building the evidence-rich shortlist…",
