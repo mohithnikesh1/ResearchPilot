@@ -1,147 +1,104 @@
 <p align="center">
   <a href="https://mohithnikesh1.github.io/ResearchPilot/">
-    <img src="assets/readme-banner.svg" alt="ResearchPilot — Good research. A clear next step." width="100%">
+    <img src="assets/readme-banner.svg" alt="ResearchPilot" width="100%">
   </a>
 </p>
 
-<p align="center">
-  <a href="https://mohithnikesh1.github.io/ResearchPilot/"><img alt="Open the live app" src="https://img.shields.io/badge/Live%20app-Open%20ResearchPilot-ad1830?style=for-the-badge&logo=githubpages&logoColor=white"></a>
-  <img alt="Version 3.0.0" src="https://img.shields.io/badge/version-3.0.0-192f3d?style=for-the-badge">
-  <a href="https://huggingface.co/spaces/mohithnikesh/ResearchPilot"><img alt="Backend on Hugging Face Spaces" src="https://img.shields.io/badge/backend-Hugging%20Face%20Space-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black"></a>
-  <a href="LICENSE"><img alt="All rights reserved" src="https://img.shields.io/badge/licence-all%20rights%20reserved-6b7280?style=for-the-badge"></a>
-</p>
-
-<p align="center">
-  <img alt="Single-file frontend" src="https://img.shields.io/badge/frontend-one%20HTML%20file-192f3d?style=flat-square&logo=html5&logoColor=white">
-  <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white">
-  <img alt="Python 3.11" src="https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white">
-  <img alt="SCImago 2025" src="https://img.shields.io/badge/metrics-SCImago%20SJR%202025-ad1830?style=flat-square">
-  <img alt="No build step" src="https://img.shields.io/badge/build%20step-none-6b7280?style=flat-square">
-</p>
-
-<p align="center">
-  <b><a href="https://mohithnikesh1.github.io/ResearchPilot/">Open the app</a></b>
-  &nbsp;·&nbsp; <a href="#-what-you-can-do">Features</a>
-  &nbsp;·&nbsp; <a href="#-evidence-first-by-design">Evidence-first design</a>
-  &nbsp;·&nbsp; <a href="#-how-it-fits-together">Architecture</a>
-  &nbsp;·&nbsp; <a href="#-privacy">Privacy</a>
-  &nbsp;·&nbsp; <a href="#-sources--attribution">Sources</a>
-</p>
-
-<br>
-
 **ResearchPilot** is an independent publishing and research-data assistant for **University of Wisconsin–Madison researchers**. It helps you choose where to publish, understand what you may share, and find a home for your data, and it shows the evidence behind each suggestion. Open it in any browser; there's nothing to install or sign in to.
+
+**[Open ResearchPilot](https://mohithnikesh1.github.io/ResearchPilot/)** | [Backend on Hugging Face](https://huggingface.co/spaces/mohithnikesh/ResearchPilot) | Version 3.0.0 | [All rights reserved](LICENSE)
 
 > [!NOTE]
 > ResearchPilot is an independent tool, **not an official UW–Madison or UW–Madison Libraries service**. Its results support decisions; they do not guarantee acceptance, funding eligibility or permission to deposit.
 
----
+## What you can do
 
-## ✨ What you can do
+### Find a journal
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <h3>📰 Find a journal</h3>
-      <p>Browse by <b>subject</b> or paste your <b>title and abstract</b>. ResearchPilot ranks active journals from a verified Scopus × SCImago index of <b>32,050 active titles</b>.</p>
-      <ul>
-        <li>Explainable <b>fit score</b> out of 100 (not an acceptance probability)</li>
-        <li>SJR quartile <b>per subject category</b>, each linked to SCImago</li>
-        <li>Indexation status: new, renamed or discontinued titles are flagged</li>
-        <li>Recent article evidence from OpenAlex</li>
-        <li>Journal website and author-guideline links</li>
-        <li>Compare up to five journals · export CSV, BibTeX or RIS · draft a cover letter</li>
-      </ul>
-    </td>
-    <td width="50%" valign="top">
-      <h3>🛡️ Share your article</h3>
-      <p>Know which version you may share, where, and when.</p>
-      <ul>
-        <li><b>Have a DOI?</b> Article-level permissions from OA.Works, the data behind cOAlition S's Journal Checker Tool</li>
-        <li><b>Only a journal name or ISSN?</b> The journal's record from the Jisc Open Policy Finder API, with each option kept separate</li>
-        <li>Checked against your version, deposit location, licence and funder</li>
-        <li>Required deposit statements shown word for word</li>
-        <li>ShareYourPaper deposit link and MINDS@UW guidance</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3>🗄️ Find a data repository</h3>
-      <p>Describe your dataset in two short steps and get matched repositories.</p>
-      <ul>
-        <li>Chosen from a <b>curated registry of 24 repositories</b>, with reviewed facts</li>
-        <li>MINDS@UW and Dryad (UW–Madison membership) offered when your requirements allow</li>
-        <li>Checks for DOI, versioning, embargo, licence and size requirements</li>
-        <li>Sensitive and personal data triggers explicit review warnings</li>
-      </ul>
-    </td>
-    <td width="50%" valign="top">
-      <h3>💬 Chat with ResearchPilot</h3>
-      <p>Ask anything about publishing and research data, and get streamed answers.</p>
-      <ul>
-        <li>Grounded in curated UW–Madison guidance: APC agreements, OA policy, MINDS@UW and RDM support</li>
-        <li>Explains metrics, quartiles, FAIR data, embargoes and licences in plain language</li>
-        <li>Pulls live Open Policy Finder data for journal-policy questions</li>
-        <li>One click takes you into the right tool</li>
-      </ul>
-    </td>
-  </tr>
-</table>
+Browse by **subject** or paste your **title and abstract**. ResearchPilot ranks journals from a Scopus and SCImago index of **30,118 active journals**.
 
----
+- A **fit score** out of 100 that shows how it was worked out. It is not an acceptance probability.
+- SJR quartile **per subject category**, each linked to SCImago.
+- Indexation status, so new, renamed and discontinued titles are flagged.
+- Recent articles from OpenAlex as evidence of fit.
+- Links to the journal website and author guidelines.
+- Compare up to five journals, export CSV, BibTeX or RIS, and draft a cover letter.
 
-## 🔍 Evidence-first by design
+### Share your article
 
-> **The AI explains. Verified sources decide.**
+Find out which version you may share, where, and when.
 
-Language models are good at understanding a manuscript and explaining options, but they are unreliable sources of facts. ResearchPilot keeps the two jobs apart:
+- **With a DOI**, article-level permissions come from OA.Works, the data behind cOAlition S's Journal Checker Tool.
+- **With only a journal name or ISSN**, the journal's record comes from the Jisc Open Policy Finder API, with each option kept separate.
+- Each option is checked against your version, deposit location, licence and funder.
+- Required deposit statements are shown word for word.
+- A ShareYourPaper deposit link and MINDS@UW guidance are included.
+
+### Find a data repository
+
+Describe your dataset in two short steps and get matched repositories.
+
+- Matches come from a **curated registry of 24 repositories** with reviewed facts.
+- MINDS@UW and Dryad (through UW–Madison's membership) are offered when your requirements allow.
+- Requirements for a DOI, versioning, embargo, licence and size are checked.
+- Sensitive and personal data trigger review warnings.
+
+### Ask the chat assistant
+
+Ask about publishing and research data and get streamed answers.
+
+- Answers draw on curated UW–Madison guidance: APC agreements, open-access policy, MINDS@UW and data-management support.
+- It explains metrics, quartiles, FAIR data, embargoes and licences in plain language.
+- For journal-policy questions it pulls live Open Policy Finder data.
+- It can open the right tool for you.
+
+## Where the answers come from
+
+Language models are good at reading a manuscript and explaining options, but they are unreliable sources of facts. ResearchPilot keeps the two jobs apart:
 
 | Question | Answered by | What the AI does |
 |---|---|---|
-| Which journals exist, and their ISSNs, quartiles and index status | Bundled Scopus × SCImago 2025 index (48,888 source records) | Maps your manuscript to a fixed subject list and ranks the verified candidates it is given |
-| May I deposit this version, where, and when? | OA.Works Permissions (by DOI) · Jisc Open Policy Finder (by journal) | Writes a short advice note from the retrieved facts only |
+| Which journals exist, and their ISSNs, quartiles and index status | Bundled Scopus and SCImago 2025 index (48,888 source records) | Maps your manuscript to a fixed subject list and ranks the candidates it is given |
+| May I deposit this version, where, and when? | OA.Works Permissions (by DOI) or Jisc Open Policy Finder (by journal) | Writes a short advice note from the retrieved facts only |
 | Which repository suits my dataset? | Curated registry with reviewed source links | Picks registry entries and explains the fit |
-| Does UW–Madison support my APC? | Curated UW–Madison guidance, reviewed September 2026 | Explains the options; never decides eligibility |
+| Does UW–Madison support my APC? | Curated UW–Madison guidance, reviewed October 2026 | Explains the options; never decides eligibility |
 
 - **Unknown stays unknown.** A missing embargo is never shown as "no embargo", and a missing record is never shown as "not permitted".
 - **Policy options stay whole.** One option's licence is never combined with another option's deposit location or timing.
-- **No invented links.** Journal and publisher links come from matched metadata or checked publisher pages, never from a guess.
+- **No invented links.** Journal and publisher links come from matched metadata or checked publisher pages.
 - **Stated limits.** Every result lists which filters were applied and what still needs a manual check.
 
----
-
-## 🧭 How it fits together
+## How it fits together
 
 ```mermaid
 flowchart TB
-    R(["🎓 Researcher"]) --> W["ResearchPilot web app<br/>GitHub Pages"]
-    W -- "HTTPS · JSON / streaming chat" --> API["ResearchPilot API<br/>FastAPI · Hugging Face Space"]
-    API <-. "classify · rank · explain" .-> LLM{{"Language model"}}
+    R(["Researcher"]) --> W["ResearchPilot web app<br/>GitHub Pages"]
+    W -- "HTTPS: JSON and streaming chat" --> API["ResearchPilot API<br/>FastAPI on a Hugging Face Space"]
+    API <-. "classify, rank, explain" .-> LLM{{"Language model"}}
     API --> IDX & REG & OAW & OPF & OAX
 
-    subgraph SRC["Verified sources: every fact comes from here"]
-        IDX[("Journal index<br/>Scopus × SCImago 2025")]
-        REG[("Repository registry<br/>+ UW–Madison guidance")]
+    subgraph SRC["Sources: every fact comes from here"]
+        IDX[("Journal index<br/>Scopus and SCImago 2025")]
+        REG[("Repository registry<br/>and UW–Madison guidance")]
         OAW["OA.Works<br/>Permissions"]
         OPF["Jisc Open Policy<br/>Finder API"]
         OAX["OpenAlex"]
     end
 
-    classDef app fill:#192f3d,stroke:#192f3d,color:#fbf9f1;
-    classDef data fill:#fbf9f1,stroke:#ad1830,color:#192f3d;
+    classDef app fill:#282728,stroke:#282728,color:#ffffff;
+    classDef data fill:#ffffff,stroke:#ad1830,color:#282728;
     classDef ai fill:#ad1830,stroke:#ad1830,color:#ffffff;
     class W,API app;
     class IDX,REG,OAW,OPF,OAX data;
     class LLM ai;
-    style SRC fill:#fff5f5,stroke:#ad1830,stroke-dasharray:4 4,color:#ad1830
+    style SRC fill:#f3f3f3,stroke:#ad1830,color:#282728
 ```
 
 <details>
-<summary><b>📁 What's in this repository</b></summary>
+<summary><b>What's in this repository</b></summary>
 <br>
 
-The live site is **one self-contained file** with no build step and no external scripts or fonts:
+The live site is **one self-contained file** with no build step and no external scripts. Its typefaces load from Google Fonts.
 
 ```text
 index.html                 the complete app: inline styles, configuration block,
@@ -150,12 +107,12 @@ assets/readme-banner.svg   banner used by this README
 LICENSE                    proprietary licence (all rights reserved)
 ```
 
-`js/`, `css/` and the other files in `assets/` are left over from the earlier multi-file version. `index.html` doesn't load them.
+The other files in `assets/` are left over from the earlier multi-file version. `index.html` doesn't load them.
 
 </details>
 
 <details>
-<summary><b>⚙️ Configuration</b></summary>
+<summary><b>Configuration</b></summary>
 <br>
 
 Every API call uses `apiBase` in the inline configuration block near the end of `index.html`:
@@ -172,7 +129,7 @@ API keys and other secrets never belong in this repository. They are stored in t
 </details>
 
 <details>
-<summary><b>🚀 Hosting and publishing updates</b></summary>
+<summary><b>Hosting and publishing updates</b></summary>
 <br>
 
 The site is served by **GitHub Pages** from the `main` branch (repository root) and calls the live backend at <https://mohithnikesh-researchpilot.hf.space>.
@@ -183,9 +140,7 @@ The site is served by **GitHub Pages** from the `main` branch (repository root) 
 
 </details>
 
----
-
-## 🔒 Privacy
+## Privacy
 
 > [!IMPORTANT]
 > Don't enter confidential manuscripts or identifiable personal or health data.
@@ -193,11 +148,10 @@ The site is served by **GitHub Pages** from the `main` branch (repository root) 
 - Manuscript details, dataset descriptions and chat messages may be sent to **OpenAI** to provide AI assistance.
 - **OpenAlex** receives subject keywords, not your unpublished title or abstract.
 - Policy checks send only the **DOI or journal identifiers** to the relevant services.
+- The page loads its typefaces from **Google Fonts**, so Google receives your IP address and browser details.
 - Usage statistics are **counts only**. Your questions, abstracts and DOIs are never stored for analytics.
 
----
-
-## 📚 Sources & attribution
+## Sources and attribution
 
 | Source | Used for |
 |---|---|
@@ -205,14 +159,10 @@ The site is served by **GitHub Pages** from the `main` branch (repository root) 
 | [ShareYourPaper Permissions](https://shareyourpaper.org/permissions) (OA.Works) | Article-level self-archiving permissions |
 | [Jisc Open Policy Finder](https://openpolicyfinder.jisc.ac.uk) | Journal-level sharing policies, licensed CC BY-NC-ND 4.0 |
 | [OpenAlex](https://openalex.org) | Journal metadata, related works and citation chains |
-| [re3data](https://www.re3data.org) | Where to verify repository details |
+| [re3data](https://www.re3data.org) | Where to check repository details |
 | [UW–Madison Libraries](https://www.library.wisc.edu/research-support/scholarly-communication/open-access/publishing-support/) | Current APC agreements and publishing support: always confirm eligibility here |
 
 ---
 
-<p align="center">
-  <b>Built for UW–Madison researchers.</b><br>
-  <a href="https://mohithnikesh1.github.io/ResearchPilot/">Open ResearchPilot →</a>
-  <br><br>
-  <sub>© 2026 Mohith Nikesh. All rights reserved. See <a href="LICENSE">LICENSE</a>.<br>Not affiliated with or endorsed by the University of Wisconsin–Madison.</sub>
-</p>
+© 2026 Mohith Nikesh. All rights reserved. See [LICENSE](LICENSE).
+Not affiliated with or endorsed by the University of Wisconsin–Madison.
